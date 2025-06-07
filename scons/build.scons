@@ -1,0 +1,217 @@
+from scons.common import parse_config
+from pathlib import Path
+
+Import("VARS")
+
+TARGET = VARS.get("TARGET")
+PLATFORM = VARS.get("PLATFORM")
+env = VARS.get("env")
+
+# Clone the C env and clear C flags
+cxx_env = env.Clone()
+cxx_env['CCFLAGS'] = ['-DMS_PLATFORM_X86', '-D_GNU_SOURCE'] + (['-DMS_TEST'] if '-DMS_TEST' in env['CCFLAGS'] else [])
+cxx_env['LINK'] = 'g++'
+
+ROOT = Dir('#')
+
+BUILD_DIR = ROOT.Dir('build').Dir(PLATFORM)
+BIN_DIR = BUILD_DIR.Dir('bin')
+OBJ_DIR = BUILD_DIR.Dir('obj')
+TEST_DIR = BUILD_DIR.Dir('test')
+
+PY_DIR = ROOT.Dir('py')
+PROJ_DIR = ROOT.Dir('projects')
+LIB_DIR = ROOT.Dir('libraries')
+SMOKE_DIR = ROOT.Dir('smoke')
+
+LIB_BIN_DIR = BIN_DIR.Dir('libraries')
+LIB_OBJ_DIR = OBJ_DIR.Dir('libraries')
+LIBRARIES_INC_DIR = LIB_DIR.Dir("ms-common").Dir("inc")
+
+AUTOGEN_DIR = ROOT.Dir("autogen")
+
+def src(path):
+    # return all source files within a path
+    srcs = []
+    for file in path.glob("src/*.[cs]") + path.glob("src/*.cc") + path.glob("src/*.cpp") + \
+               path.glob(f"src/{PLATFORM}/*.[cs]") + path.glob(f"src/{PLATFORM}/*.cc") + path.glob(f"src/{PLATFORM}/*.cpp"):
+        if file.abspath.startswith(OBJ_DIR.abspath):
+            srcs.append(file)
+        else:
+            srcs.append(OBJ_DIR.File(file.path))
+    return srcs
+
+def inc(path):
+    # return all include directories within a path
+    return [path.Dir("inc"), path.Dir("inc").Dir(PLATFORM)]
+
+
+def get_lib_deps(entry):
+    # Recursively get library dependencies for entry
+    config = parse_config(entry)
+    deps = config['libs'] + config['{}_libs'.format(PLATFORM)]
+    for dep in deps:
+        deps += get_lib_deps(LIB_DIR.Dir(dep))
+    return deps
+
+###########################################################
+# Header file generation from jinja templates
+###########################################################
+autogen_sources = list(Path(AUTOGEN_DIR.abspath).rglob("*"))
+autogen_sources += list(Path(ROOT.abspath).glob("can/boards/*"))
+
+AlwaysBuild(env.Command(
+    LIBRARIES_INC_DIR.File("system_can.h"),
+    autogen_sources,
+    f"python3 -m autogen system_can -o can/inc"
+))
+
+def generate_can_files(env, project):
+    project_can_dir = OBJ_DIR.Dir(project).Dir("can")
+    output_files = []
+
+    project_name = Path(project).stem
+    can_template_dir = Path(str(AUTOGEN_DIR), "templates/project_can")
+    for template in can_template_dir.glob('*/*.jinja'):
+        template_path = template.relative_to(can_template_dir)
+        output_name = str(template_path) \
+            .replace(r"{{project_name}}", project_name) \
+            .replace(".jinja", "")
+
+        output_files.append(project_can_dir.File(output_name))
+
+    env.Command(output_files, autogen_sources,
+                f"python3 -m autogen project_can -o {project_can_dir.path}")
+
+    # Add a VariantDir that point to can folder. Create the can target specific for the project
+    VariantDir(project_can_dir, ROOT.Dir('can'), duplicate=0)
+    return src(project_can_dir), [project_can_dir.Dir("inc")] + inc(ROOT.Dir("can"))
+
+
+###########################################################
+# Library Build Functions
+###########################################################
+
+# Dictionary to store all library targets
+library_targets = {}
+
+# Include all library headers
+lib_incs = [inc(lib_dir) for lib_dir in LIB_DIR.glob('*')]
+
+def build_library(library_name, dependencies=None):
+    # Skip if already built
+    if library_name in library_targets:
+        return library_targets[library_name]
+    
+    print(f"Building library: {library_name}")
+    
+    entry = LIB_DIR.Dir(library_name)
+    config = parse_config(entry)
+
+    # Get dependencies and build them first
+    lib_deps = []
+    if dependencies:
+        lib_deps = dependencies
+    else:
+        lib_deps = get_lib_deps(entry)
+
+    # Build all dependencies first
+    dep_targets = []
+    for dep in lib_deps:
+        if dep not in library_targets and LIB_DIR.Dir(dep).exists():
+            dep_target = build_library(dep)
+            dep_targets.append(dep_target)
+    
+    # Build this library
+    target = env.Library(
+        target=LIB_BIN_DIR.File(f'lib{entry.name}.a'),
+        source=src(entry),
+        LIBS=env['LIBS'] + lib_deps * 2,
+        LIBPATH=[LIB_BIN_DIR],
+        CPPPATH=env['CPPPATH'] + lib_incs,
+        CCFLAGS=env['CCFLAGS'] + config.get('cflags', [])
+    )
+
+    # Register the target
+    library_targets[library_name] = target
+
+    # Create aliases
+    Alias(entry.path, target)
+    Alias(entry.name, target)
+
+    return target
+
+###########################################################
+# Build Process
+###########################################################
+
+# 1. Build ms-common first
+ms_common_lib = build_library('ms-common')
+
+# 2. Build all other libraries
+for entry in LIB_DIR.glob('*'):
+    if entry.name not in ['ms-common']:
+        build_library(entry.name)
+
+###########################################################
+# Create appropriate targets for all projects and smoke projects
+###########################################################
+for entry in PROJ_DIR.glob('*') + SMOKE_DIR.glob('*'):
+    config = parse_config(entry)
+
+    incs = inc(entry)
+    srcs = src(entry)
+
+    if config["can"]:
+        # Add Autogenerated files
+        can_sources, can_headers = generate_can_files(env, entry.path)
+        srcs += can_sources
+        incs += can_headers
+
+    incs += map(ROOT.Dir, config.get("include", []))
+    srcs += map(OBJ_DIR.File, config.get("sources", []))
+
+    lib_deps = get_lib_deps(entry)
+
+    build_env = env
+
+    # SCons automagically handles object creation and linking
+    if PLATFORM == 'x86' and config['arm_only']:
+        print(f'Project: {entry} is only for ARM devices. Cannot build x86 version.')
+    else:
+        target = build_env.Program(
+            target=BIN_DIR.File(entry.path),
+            source=srcs,
+            CPPPATH=build_env['CPPPATH'] + incs + lib_incs,
+            # link each library twice so that dependency cycles are resolved
+            # See: https://stackoverflow.com/questions/45135
+            LIBS=build_env['LIBS'] + lib_deps * 2,
+            LIBPATH=[LIB_BIN_DIR],
+            CCFLAGS=build_env['CCFLAGS'] + config['cflags'],
+        )
+
+    # .bin file only required for arm, not x86
+    if PLATFORM == 'arm':
+        target = env.Bin(target=BIN_DIR.File(entry.path + '.bin'),
+                         source=target)
+    
+
+    # Create an alias for the entry so we can do `scons leds` and it Just Works
+    Alias(entry.path, target)
+    Alias(entry.name, target)
+
+###########################################################
+# Python
+###########################################################
+for entry in PY_DIR.glob("*", exclude=["*.*", "__pycache__"]):
+    target = env.Command(entry.path, [],
+                         f"PYTHONPATH={PY_DIR.path} python3 {entry.path}/main.py")
+    config = parse_config(entry)
+    if config["can"]:
+        # Depends(target, PY_DIR.File("can/message.py"))
+        pass
+    Alias(entry.path, target)
+    Alias(entry.name, target)
+
+# Build all projects when you just run `scons`
+Default(TARGET or [e.path for e in PROJ_DIR.glob('*')])
