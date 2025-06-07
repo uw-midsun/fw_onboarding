@@ -60,7 +60,7 @@ def main():
     if args.smoke is not None:
         process_directory(Path.cwd() / Path("smoke") / Path(args.smoke))
 
-    if args.project is None and args.smoke is None and args.py is None:
+    if args.project is None and args.smoke is None:
         process_directory(Path.cwd())
 
     print("Finished processing files.")
