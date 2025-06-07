@@ -1,0 +1,4 @@
+<map id="PedalCalibBlob" name="PedalCalibBlob">
+<area shape="rect" id="node1" title="Stores pedal calibration data for the break and the throttle pedals." alt="" coords="25,108,145,133"/>
+<area shape="rect" id="node2" href="$structPedalCalibrationData.html" title="Stores data that defines when the pedal is full pressed or unpressed." alt="" coords="5,5,165,31"/>
+</map>
