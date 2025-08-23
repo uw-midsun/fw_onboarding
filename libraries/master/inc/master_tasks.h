@@ -23,9 +23,9 @@
  * @{
  */
 
-#ifndef MASTER_TASK_1000HZ_SIZE
-/** @brief  Number of bytes statically allocated for 1000hz task */
-#define MASTER_TASK_1000HZ_SIZE (TASK_STACK_256)
+#ifndef MASTER_TASK_100HZ_SIZE
+/** @brief  Number of bytes statically allocated for 100hz task */
+#define MASTER_TASK_100HZ_SIZE (TASK_STACK_256)
 #endif
 
 #ifndef MASTER_TASK_10HZ_SIZE
@@ -39,11 +39,11 @@
 #endif
 
 /**
- * @brief   Run the 1000hz cycle
+ * @brief   Run the 100hz cycle
  * @details If this cycle takes longer than 1ms it will throw a warning
  *          If this cycle takes longer than 1ms 5 times in a row, the scheduler will stop
  */
-void run_1000hz_cycle();
+void run_100hz_cycle();
 
 /**
  * @brief   Run the 10hz cycle
@@ -66,17 +66,17 @@ void pre_loop_init();
 
 /**
  * @brief   Initialize all 3 master tasks
- * @details The three tasks run at 1000hz (1ms), 10hz (100ms) and 1hz (1s)
+ * @details The three tasks run at 100hz (1ms), 10hz (100ms) and 1hz (1s)
  * @return  STATUS_CODE_OK if initialization succeeded for all 3 tasks
  *          STATUS_CODE_INVALID_ARGS if initialization failed for atleast 1 of the 3 tasks
  */
 StatusCode init_master_tasks();
 
 /**
- * @brief   Fetch the memory address of the 1000hz task
- * @return  Pointer to the 1000hz task
+ * @brief   Fetch the memory address of the 100hz task
+ * @return  Pointer to the 100hz task
  */
-Task *get_1000hz_task();
+Task *get_100hz_task();
 
 /**
  * @brief   Fetch the memory address of the 10hz task

@@ -14,7 +14,7 @@
 /* Intra-component Headers */
 #include "master_tasks.h"
 
-#define MASTER_1000HZ_TO_MS 1U
+#define MASTER_100HZ_TO_MS 10U
 #define MASTER_10HZ_TO_MS 100U
 #define MASTER_1HZ_TO_MS 1000U
 
@@ -25,7 +25,7 @@ static uint8_t s_cycles_over = 0;
 
 void master_no_op() {}
 
-void run_1000hz_cycle() __attribute__((weak, alias("master_no_op")));
+void run_100hz_cycle() __attribute__((weak, alias("master_no_op")));
 void run_10hz_cycle() __attribute__((weak, alias("master_no_op")));
 void run_1hz_cycle() __attribute__((weak, alias("master_no_op")));
 void pre_loop_init() __attribute__((weak, alias("master_no_op")));
@@ -45,13 +45,13 @@ void check_late_cycle(Task *task, BaseType_t delay) {
   }
 }
 
-TASK(master_task_1000hz, MASTER_TASK_1000HZ_SIZE) {
+TASK(master_task_100hz, MASTER_TASK_100HZ_SIZE) {
   pre_loop_init();
   TickType_t xLastWakeTime = xTaskGetTickCount();
   while (true) {
-    run_1000hz_cycle();
-    BaseType_t delay = xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(MASTER_1000HZ_TO_MS));
-    check_late_cycle(master_task_1000hz, delay);
+    run_100hz_cycle();
+    BaseType_t delay = xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(MASTER_100HZ_TO_MS));
+    check_late_cycle(master_task_100hz, delay);
   }
 }
 
@@ -75,15 +75,15 @@ TASK(master_task_1hz, MASTER_TASK_1HZ_SIZE) {
 
 StatusCode init_master_tasks() {
   s_cycles_over = 0;
-  status_ok_or_return(tasks_init_task(master_task_1000hz, MASTER_TASKS_PRIORITY, NULL));
+  status_ok_or_return(tasks_init_task(master_task_100hz, MASTER_TASKS_PRIORITY, NULL));
   status_ok_or_return(tasks_init_task(master_task_10hz, MASTER_TASKS_PRIORITY - 1U, NULL));
   status_ok_or_return(tasks_init_task(master_task_1hz, MASTER_TASKS_PRIORITY - 2U, NULL));
 
   return STATUS_CODE_OK;
 }
 
-Task *get_1000hz_task() {
-  return master_task_1000hz;
+Task *get_100hz_task() {
+  return master_task_100hz;
 }
 
 Task *get_10hz_task() {
