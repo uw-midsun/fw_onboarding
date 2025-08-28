@@ -15,8 +15,7 @@ sudo apt-get update
 sudo apt-get install -y tmux git vim curl
 
 echo "Installing Python tooling..."
-sudo apt-get install -y python3-pip virtualenv python3-autopep8 pylint
-python3 -m pip install --upgrade pip
+sudo apt-get install -y virtualenv python3-autopep8 pylint
 python3 -m pip install cpplint python-can cantools Jinja2 PyYAML pyserial
 
 echo "Installing CAN tooling..."
