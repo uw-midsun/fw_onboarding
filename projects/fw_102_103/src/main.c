@@ -10,13 +10,12 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
+#include "ads1115.h"
 #include "delay.h"
 #include "gpio.h"
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
-
-#include "ads1115.h"
 
 /* Intra-component Headers */
 #include "fw_102_103.h"
