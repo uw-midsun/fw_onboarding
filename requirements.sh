@@ -1,3 +1,9 @@
+add_line_if_dne () {
+  if [ ! grep -q "$1" "$2" ]; then
+    echo "$1" >> "$2"
+  fi
+}
+
 apt-get update
 
 echo "==> Install common tools"
