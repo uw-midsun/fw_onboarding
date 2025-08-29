@@ -73,7 +73,6 @@ typedef enum {
 typedef struct {
   I2CPort i2c_port;       /**< I2C port used for communication */
   I2CAddress i2c_addr;    /**< I2C address of the ADS1115 */
-  Task *handler_task;     /**< Task to notify when conversion is ready */
   GpioAddress *ready_pin; /**< GPIO pin used for the ALERT/RDY signal */
 } ADS1115_Config;
 
