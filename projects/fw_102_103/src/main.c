@@ -74,15 +74,15 @@ int main() {
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
   /* --------------------- FW102 END --------------------- */
 
-  /* --------------------- FW103 START --------------------- */
-  /* Initialize the RTOS tasks and data queue */
-  /* --------------------- FW103 END --------------------- */
-
   /* Initialize printing module */
   log_init();
 
   /* Initialize RTOS tasks */
   tasks_init();
+
+  /* --------------------- FW103 START --------------------- */
+  /* Initialize the RTOS tasks and data queue */
+  /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
   tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
