@@ -72,11 +72,11 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 
 int main() {
   /* --------------------- FW102 START --------------------- */
-  /* Initialize the MCU, I2C and blinky GPIO */
+  /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
   /* --------------------- FW102 END --------------------- */
 
   /* --------------------- FW103 START --------------------- */
-  /* Initialize the data queue */
+  /* Initialize the RTOS tasks and data queue */
   /* --------------------- FW103 END --------------------- */
 
   /* Initialize printing module */
