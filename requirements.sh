@@ -1,55 +1,55 @@
-#!/bin/bash
-set -e
+apt-get update
 
-echo "Updating package lists and upgrading system..."
-sudo apt update && sudo apt full-upgrade -y
+echo "==> Install common tools"
+apt-get -y install tmux
+apt-get -y install git
+apt-get -y install vim
+apt-get -y install curl
+apt-get -y install scons
 
-add_line_if_dne () {
-  if ! grep -Fxq "$1" "$2"; then
-    echo "$1" | sudo tee -a "$2"
-  fi
-}
+echo "==> Install python tooling"
+apt-get -y install python3-pip
+apt-get -y install virtualenv
+apt-get -y install python3-autopep8
+apt-get -y install pylint
+python3 -m pip install cpplint
 
-echo "Installing common tools..."
-sudo apt-get update
-sudo apt-get install -y tmux git vim curl
+echo "==> Install tooling for CAN"
+apt-get -y install can-utils
 
-echo "Installing Python tooling..."
-sudo apt-get install -y virtualenv python3-autopep8 pylint
-python3 -m pip install cpplint python-can cantools Jinja2 PyYAML pyserial
+python3 -m pip install python-can
+python3 -m pip install cantools
+python3 -m pip install Jinja2
+python3 -m pip install PyYAML
+python3 -m pip install pyserial
 
-echo "Installing CAN tooling..."
-sudo apt-get install -y can-utils
+echo "==> Install clang and gcc"
+apt install binutils-arm-none-eabi
+apt-get install -y libncurses5 libncursesw5
+add-apt-repository -y ppa:ubuntu-toolchain-r/test
+apt-get -y install gcc-11
+apt-get -y install g++-11
+apt-get -y install clang-10
+apt-get -y install clang-format-10
+apt-get -y install gdb
 
-echo "Installing Clang/GCC toolchains..."
-sudo apt-get install -y binutils-arm-none-eabi libncurses5 libncursesw5 \
-  gcc-11 g++-11 clang-11 clang-format-12 gdb
+ln -sf $(which gcc-11) /usr/bin/gcc
+ln -sf $(which clang-10) /usr/bin/clang
+ln -sf $(which clang-format-10) /usr/bin/clang-format
 
-echo "Installing nlohmann-json..."
-sudo apt-get install -y nlohmann-json3-dev
-
-echo "Installing ARM GCC toolchain if not already present..."
-ARM_GCC_DIR="/usr/local/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi"
-if [ ! -d "$ARM_GCC_DIR" ]; then
+if [ ! $? ]; then
+  echo "==> Install arm gcc 11.3"
   wget https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi.tar.xz -O arm-gcc.tar.xz
-  sudo tar -xf arm-gcc.tar.xz -C /usr/local
+  tar xf arm-gcc.tar.xz -C /usr/local
+  add_line_if_dne 'PATH=$PATH:/usr/local/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi/bin' /etc/profile
   rm arm-gcc.tar.xz
-  add_line_if_dne "export PATH=\$PATH:$ARM_GCC_DIR/bin" /etc/profile
 fi
 
-echo "Installing other toolchain utilities..."
-sudo apt-get install -y minicom openocd
+echo "==> Install other toolchain pieces"
+apt-get -y install minicom
+apt-get -y install openocd
 
-echo "Configuring minicom..."
-sudo touch /etc/minicom/minirc.dfl
+echo "==> Setup for minicom"
+touch /etc/minicom/minirc.dfl
 add_line_if_dne "pu addcarreturn    Yes" /etc/minicom/minirc.dfl
 
-echo "gcc version: $(gcc --version | head -n 1)"
-echo "clang version: $(clang --version | head -n 1)"
-echo "arm-none-eabi-gcc version: $(arm-none-eabi-gcc --version | head -n 1)"
-echo "openocd version: $(openocd --version)"
-echo "gdb version: $(gdb --version | head -n 1)"
-echo "minicom version: $(minicom --version | head -n 1)"
-echo "can-utils version: $(can-utils --version | head -n 1)"
-echo "python3 version: $(python3 --version)"
-echo "pip version: $(pip --version)"
