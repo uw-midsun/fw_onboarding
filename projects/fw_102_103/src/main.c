@@ -16,21 +16,16 @@
 #include "mcu.h"
 #include "queues.h"
 
-/* FW102 Onboarding module */
 #include "ads1115.h"
 
 /* Intra-component Headers */
 #include "fw_102_103.h"
 
+/* TODO: FW103 Add reader task period. Feel free to play around with these values! */
+#define BLINKY_PERIOD_MS 1000U
+#define ADS1115_SAMPLING_PERIOD_MS 1000U
+
 static GpioAddress blinky_gpio = {
-  /* --------------------- TODO: FW102 --------------------- */
-};
-
-static I2CSettings i2c_settings = {
-  /* --------------------- TODO: FW102 --------------------- */
-};
-
-static ADS1115_Config ads1115_cfg = {
   /* --------------------- TODO: FW102 --------------------- */
 };
 
@@ -61,16 +56,29 @@ TASK(ads1115_reader, TASK_STACK_256) {
 TASK(ads1115_data_simulator, TASK_STACK_256) {
   /* This task simulates the I2C data for simulated off-target testing */
 
-  uint16_t simulated_voltage = 14414; /* Rouguhly 1.8V */
+  unsigned int noise_rand_seed = 0xDEADBEEF;
+  uint16_t simulated_voltage = 11200; /* 1.4V */
 
   while (true) {
-    i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&simulated_voltage, sizeof(simulated_voltage));
+    /* Simulate noise +- 500 */
+    int16_t noise = (rand_r(&noise_rand_seed) % 1001) - 500;
+    uint16_t noisy_voltage = simulated_voltage + noise;
+
+    i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&noisy_voltage, sizeof(noisy_voltage));
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
 }
 #endif
 
 int main() {
+  /* --------------------- FW102 START --------------------- */
+  /* Initialize the MCU, I2C and blinky GPIO */
+  /* --------------------- FW102 END --------------------- */
+
+  /* --------------------- FW103 START --------------------- */
+  /* Initialize the data queue */
+  /* --------------------- FW103 END --------------------- */
+
   /* Initialize printing module */
   log_init();
 
