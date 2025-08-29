@@ -23,6 +23,9 @@ python3 -m pip install cpplint
 echo "==> Install tooling for CAN"
 apt-get -y install can-utils
 
+echo "Installing nlohmann-json..."
+apt-get install -y nlohmann-json3-dev
+
 python3 -m pip install python-can
 python3 -m pip install cantools
 python3 -m pip install Jinja2
