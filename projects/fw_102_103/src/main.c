@@ -10,10 +10,10 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "mcu.h"
-#include "gpio.h"
 #include "delay.h"
+#include "gpio.h"
 #include "log.h"
+#include "mcu.h"
 #include "queues.h"
 
 /* FW102 Onboarding module */
