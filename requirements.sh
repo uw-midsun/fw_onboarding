@@ -32,7 +32,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     apt-get install -y nlohmann-json3-dev
 
         echo "==> Install clang and gcc"
-    apt-get -y install binutils-arm-none-eabi libncurses5 libncursesw5 software-properties-common
+    apt-get -y install binutils-arm-none-eabi libncurses-dev software-properties-common
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
     apt-get -y install gcc-11 g++-11 clang clang-format gdb
 
