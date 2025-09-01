@@ -12,7 +12,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     apt-get update
 
     echo "==> Install common tools"
-    apt-get -y install tmux git vim curl scons
+    apt-get -y install tmux git vim curl
 
     echo "==> Install python tooling"
     apt-get -y install python3-pip virtualenv python3-autopep8 pylint
