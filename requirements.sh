@@ -16,7 +16,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
     echo "==> Install python tooling"
     apt-get -y install python3-pip virtualenv python3-autopep8 pylint
-    python3 -m pip install --upgrade pip
+    python3 -m pip install --upgrade --ignore-installed pip
 
     echo "==> Install Python requirements"
     if python3 -m pip install -h | grep -q -- '--break-system-packages'; then
