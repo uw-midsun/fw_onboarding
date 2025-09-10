@@ -56,13 +56,16 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
   /* This task simulates the I2C data for simulated off-target testing */
 
   unsigned int noise_rand_seed = 0xDEADBEEF;
-  uint16_t simulated_voltage = 11200; /* 1.4V */
+  uint16_t simulated_voltage = 22400; /* 1.4V */
+
+  uint16_t dummy_cfg_reg_data = 0x123;
 
   while (true) {
     /* Simulate noise +- 500 */
     int16_t noise = (rand_r(&noise_rand_seed) % 1001) - 500;
     uint16_t noisy_voltage = simulated_voltage + noise;
 
+    i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&dummy_cfg_reg_data, sizeof(dummy_cfg_reg_data));
     i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&noisy_voltage, sizeof(noisy_voltage));
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }

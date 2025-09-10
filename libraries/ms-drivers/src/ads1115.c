@@ -54,9 +54,15 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 
   uint16_t cmd;
 
+  /* Read the current configuration register value */
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
+
+  /* Mask out the current channel bits (MUX bits are 12-14) */
+  cmd &= ~0x7000;
+
   /* --------------------- FW103 START --------------------- */
-  /* Configure command to select the requested channel */
-  cmd = 0x0000;
+  /* Configure command to select the requested channel (Channel N should be default GND) */
+  cmd |= 0x0000U;
   /* ---------------------- FW103 END ---------------------- */
 
   i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
