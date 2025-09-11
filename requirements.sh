@@ -9,11 +9,35 @@ add_line_if_dne () {
 
 # Function to add user local bin to PATH in bashrc
 add_to_path_if_not_exists () {
-    USER_BIN_PATH=$(python3 -m site --user-base)/bin
+    USER_BIN_PATH="$(python3 -m site --user-base)/bin"
+
+    # Detect OS and shell config file
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if [ -n "$ZSH_VERSION" ]; then
+            SHELL_CONFIG="$HOME/.zprofile"
+        elif [ -n "$BASH_VERSION" ]; then
+            SHELL_CONFIG="$HOME/.bash_profile"
+        else
+            SHELL_CONFIG="$HOME/.profile"
+        fi
+    else
+        SHELL_CONFIG="$HOME/.bashrc"
+    fi
+
     if ! echo "$PATH" | grep -q "$USER_BIN_PATH"; then
-        echo "==> Adding $USER_BIN_PATH to PATH"
-        echo "export PATH=\$PATH:$USER_BIN_PATH" >> ~/.bashrc
-        source ~/.bashrc
+        echo "==> Adding $USER_BIN_PATH to PATH in $SHELL_CONFIG"
+        echo "export PATH=\"$USER_BIN_PATH:\$PATH\"" >> "$SHELL_CONFIG"
+
+        # Source config only if running interactively
+        if [[ $- == *i* ]]; then
+            # shellcheck disable=SC1090
+            source "$SHELL_CONFIG"
+            echo "Sourced $SHELL_CONFIG to update PATH in current session."
+        else
+            echo "Please restart your terminal or run 'source $SHELL_CONFIG' to update your PATH."
+        fi
+    else
+        echo "PATH already contains $USER_BIN_PATH"
     fi
 }
 
