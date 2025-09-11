@@ -70,7 +70,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     mkdir -p /etc/minicom
     touch /etc/minicom/minirc.dfl
     add_line_if_dne "pu addcarreturn    Yes" /etc/minicom/minirc.dfl
-
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "==> Detected macOS"
     echo "Installing packages with Homebrew (brew)..."
@@ -101,8 +100,17 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
       nlohmann-json
 
     echo "==> Install Python requirements"
-    /opt/homebrew/bin/pip3 install --upgrade pip
-    /opt/homebrew/bin/pip3 install -r requirements.txt
+
+    # Dynamically find pip3 path (should be in PATH)
+    PIP3_CMD=$(command -v pip3 || true)
+
+    if [[ -z "$PIP3_CMD" ]]; then
+      echo "pip3 not found in PATH, please check your Python installation."
+      exit 1
+    fi
+
+    "$PIP3_CMD" install --upgrade pip
+    "$PIP3_CMD" install -r requirements.txt
 
     add_to_path_if_not_exists
 
