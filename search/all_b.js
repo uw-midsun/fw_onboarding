@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['main_0',['main',['../____main_____8py.html#a19a7b3cd609ad62e14a361b54bbad262',1,'__main__']]],
+  ['masked_1',['masked',['../structX86Interrupt.html#a363c5bbe096b0980ebabf7496af2c424',1,'X86Interrupt']]],
+  ['master_5ftask_5f100hz_5fsize_2',['MASTER_TASK_100HZ_SIZE',['../group__Master__Tasks.html#ga84530c1c5d8ab0ac0f541cb3a0a7fe54',1,'master_tasks.h']]],
+  ['master_5ftask_5f10hz_5fsize_3',['MASTER_TASK_10HZ_SIZE',['../group__Master__Tasks.html#ga6aa7b0762fdf961bdb2a15b552dafeac',1,'master_tasks.h']]],
+  ['master_5ftask_5f1hz_5fsize_4',['MASTER_TASK_1HZ_SIZE',['../group__Master__Tasks.html#gaca803714dcb6478f9e7cf4b09b0c9a19',1,'master_tasks.h']]],
+  ['master_5ftasks_5',['Master_Tasks',['../group__Master__Tasks.html',1,'']]],
+  ['max_5fnum_5ftasks_6',['MAX_NUM_TASKS',['../group__RTOS__Helpers.html#gaedfe3133706a3a3f975f567f59ff06bd',1,'tasks.h']]],
+  ['mcu_7',['MCU',['../group__MCU.html',1,'']]],
+  ['mcu_5finit_8',['mcu_init',['../group__MCU.html#gab8d8c9d5d965f7b584dec873b9533a5e',1,'mcu_init(void):&#160;mcu.c'],['../group__MCU.html#gab8d8c9d5d965f7b584dec873b9533a5e',1,'mcu_init(void):&#160;mcu.c'],['../group__MCU.html#gab8d8c9d5d965f7b584dec873b9533a5e',1,'mcu_init(void):&#160;mcu.c']]],
+  ['memory_5fprotection_5funit_9',['Memory_Protection_Unit',['../group__Memory__Protection__Unit.html',1,'']]],
+  ['midnight_20sun_20firmware_10',['Midnight Sun Firmware',['../index.html',1,'']]],
+  ['miscellaneous_11',['Miscellaneous',['../group__Miscellaneous.html',1,'']]],
+  ['mpu_5fconfigure_5fregion_12',['mpu_configure_region',['../group__Memory__Protection__Unit.html#ga283b22737af9535d5031b0084359c0de',1,'mpu_configure_region(MPURegion *region, MPURegionSettings *settings):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga283b22737af9535d5031b0084359c0de',1,'mpu_configure_region(MPURegion *region, MPURegionSettings *settings):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga283b22737af9535d5031b0084359c0de',1,'mpu_configure_region(MPURegion *region, MPURegionSettings *settings):&#160;mpu.c']]],
+  ['mpu_5fdisable_5fregion_13',['mpu_disable_region',['../group__Memory__Protection__Unit.html#ga270d2c4c3942f341bbe888056a5ea61e',1,'mpu_disable_region(MPURegionNumber region_number):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga270d2c4c3942f341bbe888056a5ea61e',1,'mpu_disable_region(MPURegionNumber region_number):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga270d2c4c3942f341bbe888056a5ea61e',1,'mpu_disable_region(MPURegionNumber region_number):&#160;mpu.c']]],
+  ['mpu_5fenable_5fregion_14',['mpu_enable_region',['../group__Memory__Protection__Unit.html#ga198383f04b217bc27d8603c828e801ad',1,'mpu_enable_region(MPURegionNumber region_number):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga198383f04b217bc27d8603c828e801ad',1,'mpu_enable_region(MPURegionNumber region_number):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#ga198383f04b217bc27d8603c828e801ad',1,'mpu_enable_region(MPURegionNumber region_number):&#160;mpu.c']]],
+  ['mpu_5finit_15',['mpu_init',['../group__Memory__Protection__Unit.html#gaeac65308a871a2165e259c76eaf0a15a',1,'mpu_init(void):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#gaeac65308a871a2165e259c76eaf0a15a',1,'mpu_init(void):&#160;mpu.c'],['../group__Memory__Protection__Unit.html#gaeac65308a871a2165e259c76eaf0a15a',1,'mpu_init(void):&#160;mpu.c']]],
+  ['mpuregion_16',['MPURegion',['../structMPURegion.html',1,'']]],
+  ['mpuregionsettings_17',['MPURegionSettings',['../structMPURegionSettings.html',1,'']]],
+  ['ms_5fmutex_5finit_18',['ms_mutex_init',['../group__RTOS__Helpers.html#ga5372c4f739d52f5d6334094681192092',1,'ms_mutex_init(Mutex *mutex):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#ga5372c4f739d52f5d6334094681192092',1,'ms_mutex_init(Mutex *mutex):&#160;ms_semaphore.c']]],
+  ['ms_5fmutex_5flock_19',['ms_mutex_lock',['../group__RTOS__Helpers.html#ga72867ad33e84d17a93a5550995422a7c',1,'ms_mutex_lock(Mutex *mutex, uint16_t ms_to_wait):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#ga72867ad33e84d17a93a5550995422a7c',1,'ms_mutex_lock(Mutex *mutex, uint16_t ms_to_wait):&#160;ms_semaphore.c']]],
+  ['ms_5fmutex_5funlock_20',['ms_mutex_unlock',['../group__RTOS__Helpers.html#ga2d82e2318ed12a3880b16fabf2cde710',1,'ms_mutex_unlock(Mutex *mutex):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#ga2d82e2318ed12a3880b16fabf2cde710',1,'ms_mutex_unlock(Mutex *mutex):&#160;ms_semaphore.c']]],
+  ['ms_5fsem_5finit_21',['ms_sem_init',['../group__RTOS__Helpers.html#ga183229bc454c92e8392705cae7868c26',1,'ms_sem_init(Semaphore *sem, uint32_t max_count, uint32_t initial_count):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#ga183229bc454c92e8392705cae7868c26',1,'ms_sem_init(Semaphore *sem, uint32_t max_count, uint32_t initial_count):&#160;ms_semaphore.c']]],
+  ['ms_5fsem_5fpost_22',['ms_sem_post',['../group__RTOS__Helpers.html#gab4f781d9671c4c3cb53bf8968842bb14',1,'ms_sem_post(Semaphore *sem):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#gab4f781d9671c4c3cb53bf8968842bb14',1,'ms_sem_post(Semaphore *sem):&#160;ms_semaphore.c']]],
+  ['ms_5fsem_5fwait_23',['ms_sem_wait',['../group__RTOS__Helpers.html#ga5569fab132b4dbbdfd5ed2dcaa67cbd6',1,'ms_sem_wait(Semaphore *sem, uint32_t timeout_ms):&#160;ms_semaphore.c'],['../group__RTOS__Helpers.html#ga5569fab132b4dbbdfd5ed2dcaa67cbd6',1,'ms_sem_wait(Semaphore *sem, uint32_t timeout_ms):&#160;ms_semaphore.c']]]
+];

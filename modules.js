@@ -1,0 +1,26 @@
+var modules =
+[
+    [ "Blinky", "group__blinky.html", null ],
+    [ "Fw_102_103", "group__fw__102__103.html", null ],
+    [ "ADC", "group__ADC.html", "group__ADC" ],
+    [ "CRC", "group__CRC.html", "group__CRC" ],
+    [ "RTOS_Helpers", "group__RTOS__Helpers.html", "group__RTOS__Helpers" ],
+    [ "Flash", "group__Flash.html", "group__Flash" ],
+    [ "Finite_State_Machine", "group__Finite__State__Machine.html", "group__Finite__State__Machine" ],
+    [ "GlobalEnums", "group__GlobalEnums.html", "group__GlobalEnums" ],
+    [ "GPIO", "group__GPIO.html", "group__GPIO" ],
+    [ "I2C", "group__I2C.html", "group__I2C" ],
+    [ "Interrupts", "group__Interrupts.html", "group__Interrupts" ],
+    [ "Logger", "group__Logger.html", "group__Logger" ],
+    [ "MCU", "group__MCU.html", "group__MCU" ],
+    [ "Miscellaneous", "group__Miscellaneous.html", null ],
+    [ "Memory_Protection_Unit", "group__Memory__Protection__Unit.html", "group__Memory__Protection__Unit" ],
+    [ "Persist", "group__persist.html", "group__persist" ],
+    [ "PWM", "group__PWM.html", "group__PWM" ],
+    [ "SPI", "group__SPI.html", "group__SPI" ],
+    [ "Status_Code", "group__Status__Code.html", "group__Status__Code" ],
+    [ "UART", "group__UART.html", "group__UART" ],
+    [ "ADS1115", "group__ADS1115.html", "group__ADS1115" ],
+    [ "Master_Tasks", "group__Master__Tasks.html", "group__Master__Tasks" ],
+    [ "Autogeneration tools", "group__autogen.html", "group__autogen" ]
+];

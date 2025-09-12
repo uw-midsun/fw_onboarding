@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['send_5ftask_5fend_0',['send_task_end',['../group__RTOS__Helpers.html#ga3025629a58484fd58490c4483451a0d0',1,'send_task_end(void):&#160;tasks.c'],['../group__RTOS__Helpers.html#ga3025629a58484fd58490c4483451a0d0',1,'send_task_end():&#160;tasks.c']]],
+  ['spi_5fexchange_1',['spi_exchange',['../group__SPI.html#ga83a2836f2ac6e87b98b4c95f8546d9f1',1,'spi_exchange(SpiPort spi, uint8_t *tx_data, size_t tx_len, uint8_t *rx_data, size_t rx_len):&#160;spi.c'],['../group__SPI.html#ga83a2836f2ac6e87b98b4c95f8546d9f1',1,'spi_exchange(SpiPort spi, uint8_t *tx_data, size_t tx_len, uint8_t *rx_data, size_t rx_len):&#160;spi.c'],['../group__SPI.html#ga83a2836f2ac6e87b98b4c95f8546d9f1',1,'spi_exchange(SpiPort spi, uint8_t *tx_data, size_t tx_len, uint8_t *rx_data, size_t rx_len):&#160;spi.c']]],
+  ['spi_5finit_2',['spi_init',['../group__SPI.html#gaa1325a9b5a86c76c22e11eaf5c22f845',1,'spi_init(SpiPort spi, const SpiSettings *settings):&#160;spi.c'],['../group__SPI.html#gaa1325a9b5a86c76c22e11eaf5c22f845',1,'spi_init(SpiPort spi, const SpiSettings *settings):&#160;spi.c'],['../group__SPI.html#gaa1325a9b5a86c76c22e11eaf5c22f845',1,'spi_init(SpiPort spi, const SpiSettings *settings):&#160;spi.c']]]
+];
