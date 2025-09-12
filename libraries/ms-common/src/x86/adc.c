@@ -34,7 +34,7 @@ typedef struct AdcStatus {
 static AdcStatus s_adc_status;
 
 /* Array of readings, in order of rank, which DMA will write to */
-static volatile uint16_t s_adc_readings[MAX_ADC_READINGS];
+static uint16_t s_adc_readings[MAX_ADC_READINGS];
 
 /* Store of ranks for each channel, at their channel index */
 static uint8_t s_adc_ranks[NUM_ADC_CHANNELS];
