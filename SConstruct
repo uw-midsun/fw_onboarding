@@ -1,4 +1,5 @@
 from scons.common import flash_run
+import scons_compiledb
 import subprocess
 
 
@@ -109,6 +110,10 @@ if COMMAND == "mpxe":
 # Retrieve the construction environment from the appropriate platform script
 env = SConscript(f'platform/{PLATFORM}.py', exports=['FLASH_TYPE', 'BUILD_CONFIG'])
 
+database_name = f"compile_commands_{PLATFORM}.json"
+config = scons_compiledb.Config(db=database_name)
+scons_compiledb.enable_with_cmdline(env, config)
+
 VARS = {
     "PLATFORM": PLATFORM,
     "TARGET": TARGET,
@@ -178,7 +183,13 @@ elif COMMAND == "hil":
 # Clean
 ###########################################################
 elif COMMAND == "clean":
-    AlwaysBuild(Command('#/clean', [], 'rm -rf build/*'))
+    clean_commands = [
+        'rm -rf build/*',
+        'rm -f compile_commands_*.json',
+        'rm -f .compile_commands_*.json'
+    ]
+
+    AlwaysBuild(Command('#/clean', [], clean_commands))
 
 ###########################################################
 # Linting and Formatting
