@@ -23,6 +23,11 @@
 /* TODO: FW103 Add reader task period. Feel free to play around with these values! */
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
+#define NUM_ITEMS 5
+#define ITEM_SIZE sizeof(uint32_t) // This is the same as 4 bytes
+
+// Allocate a data buffer (array of bytes) big enough to hold all queue items
+static uint8_t s_queue_buf[NUM_ITEMS*ITEM_SIZE];
 
 static I2CSettings i2c_settings = {
   .scl = { .port = GPIO_PORT_B, .pin = 7U },
@@ -50,27 +55,53 @@ static GpioAddress blinky_gpio = {
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = NUM_ITEMS,
+  .item_size = ITEM_SIZE,
+  .storage_buf = s_queue_buf
 };
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while(true) {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("Blink - GPIO State: %d\n", gpio_get_state(&blinky_gpio));
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  float to_send = 0;
+  while (true) {
+    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &to_send);
+    if (queue_send(&ads1115_data_queue, &to_send, 1000) != STATUS_CODE_OK) {
+      LOG_DEBUG("write to queue failed\n");
+    } else {
+      LOG_DEBUG("Writing to ADC queue: %f\n", to_send);
+    }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  uint32_t received = 0;
+  while (true) {
+    if (queue_receive(&ads1115_data_queue, &received, 1000) != STATUS_CODE_OK) {
+      LOG_DEBUG("read from queue failed\n");
+    } else {
+      LOG_DEBUG("Reading from ADC queue: %u\n", received);
+    }
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
-#if defined(MS_PLATFORM_X86)
+#if defined(MS_PLATFORM_X86) 
 TASK(ads1115_data_simulator, TASK_STACK_256) {
   /* This task simulates the I2C data for simulated off-target testing */
 
@@ -107,12 +138,15 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(3U), NULL);
+  queue_init(&ads1115_data_queue);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(4U), NULL); 
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(2U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
   tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
 #endif
-
   /* Start RTOS scheduler */
   gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   tasks_start();
