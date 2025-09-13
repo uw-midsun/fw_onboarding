@@ -24,8 +24,27 @@
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
+static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+};
+
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
+};
+
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3
 };
 
 static Queue ads1115_data_queue = {
@@ -76,10 +95,13 @@ int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
   /* --------------------- FW102 END --------------------- */
-
+  printf("this is a test\n");
+  mcu_init();
   /* Initialize printing module */
   log_init();
-
+  /* initialize i2c and ads1115 */
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* Initialize RTOS tasks */
   tasks_init();
 
@@ -92,6 +114,7 @@ int main() {
 #endif
 
   /* Start RTOS scheduler */
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   tasks_start();
 
   LOG_DEBUG("exiting main?");
