@@ -82,7 +82,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* TODO: complete ADS1115 read converted function */
   uint16_t tmp;
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(&tmp), 2);
-  *reading *= 2.048/32768;
+  *reading = (float)tmp*2.048/32768;
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
