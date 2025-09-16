@@ -11,7 +11,6 @@
 
 /* Inter-component Headers */
 #include "ads1115.h"
-
 #include "gpio_interrupts.h"
 #include "i2c.h"
 
