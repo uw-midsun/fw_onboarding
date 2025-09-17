@@ -13,6 +13,7 @@
 #include "ads1115.h"
 #include "delay.h"
 #include "gpio.h"
+#include "i2c.h"
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
@@ -26,6 +27,8 @@
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3U,
 };
 
 static Queue ads1115_data_queue = {
@@ -74,7 +77,15 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 
 int main() {
   /* --------------------- FW102 START --------------------- */
-  /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  /* Initialize the MCU, GPIO, I2C, and configure the ADS1115 */
+
+  mcu_init();
+
+  /* LED for later use */
+  // Configure PB3 as a push-pull output and start LOW
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+  LOG_DEBUG("PB3 initialized LOW");
+
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
