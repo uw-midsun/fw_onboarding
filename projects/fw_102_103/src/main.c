@@ -25,6 +25,23 @@
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
+static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+};
+
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
+};
+
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
   .port = GPIO_PORT_B,
@@ -98,9 +115,12 @@ int main() {
   /* Initialize the RTOS tasks and data queue */
   /* --------------------- FW103 END --------------------- */
 
-#if defined(MS_PLATFORM_X86)
-  tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
-#endif
+  #if defined(MS_PLATFORM_X86)
+    tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
+  #endif
+
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
 
   /* Start RTOS scheduler */
   tasks_start();
