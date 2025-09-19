@@ -72,10 +72,42 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 }
 #endif
 
+static GpioAddress blinky_gpio = {
+  .port = GPIO_PORT_B,
+  .pin = 3,
+};
+
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  static I2CSettings i2c_settings = {
+    .scl = { .port = GPIO_PORT_B, .pin = 7U },
+    .sda = { .port = GPIO_PORT_B, .pin = 6U },
+    .speed = I2C_SPEED_STANDARD
+  };
+
+  static GpioAddress ready_pin = {
+    .port = GPIO_PORT_B,
+    .pin = 0U,
+  };
+
+  static ADS1115_Config ads1115_cfg = {
+    .i2c_addr = ADS1115_ADDR_GND,
+    .i2c_port = ADS1115_I2C_PORT,
+    .ready_pin = &ready_pin,
+  };
+
+  mcu_init();
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+  
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
+  
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+  float reading;
+  ads1115_read_converted(&ads1115_cfg, ADS1115_ADDR_GND, &reading);
   /* --------------------- FW102 END --------------------- */
+  
 
   /* Initialize printing module */
   log_init();
