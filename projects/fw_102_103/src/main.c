@@ -17,6 +17,9 @@
 #include "mcu.h"
 #include "queues.h"
 
+#define NUM_ITEMS 4
+#define ITEM_SIZE 5
+
 /* Intra-component Headers */
 #include "fw_102_103.h"
 
@@ -24,34 +27,85 @@
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
-
-
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
   .port = GPIO_PORT_B,
   .pin = 3,
 };
 
+static uint8_t queue_time[NUM_ITEMS * ITEM_SIZE]; //numitems * itemsize
+
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = 5,
+  .item_size = 4,
+  .storage_buf = queue_time
 };
+
+static I2CSettings i2c_settings = {
+    .scl = { .port = GPIO_PORT_B, .pin = 7U },
+    .sda = { .port = GPIO_PORT_B, .pin = 6U },
+    .speed = I2C_SPEED_STANDARD
+  };
+
+  static GpioAddress ready_pin = {
+    .port = GPIO_PORT_B,
+    .pin = 0U,
+  };
+
+  static ADS1115_Config ads1115_cfg = {
+    .i2c_addr = ADS1115_ADDR_GND,
+    .i2c_port = ADS1115_I2C_PORT,
+    .ready_pin = &ready_pin,
+  };
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (1) {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("Blink - State: 0\n");
+    delay_ms(BLINKY_PERIOD_MS);
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("Blink - State: 1\n");
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  float read = 0.0;
+  while (1) {
+    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &read);
+    StatusCode condition = queue_send(&ads1115_data_queue, &read, ADS1115_SAMPLING_PERIOD_MS);
+    if (condition != STATUS_CODE_OK) {
+      LOG_DEBUG("Writing to ADC queue failed.\n");
+    } 
+    else {
+      LOG_DEBUG("Writing to ADC queue: %f\n", (double)read);
+    }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  float process = 0.0;
+  while (1) {
+    StatusCode condition = queue_receive(&ads1115_data_queue, &process, ADS1115_SAMPLING_PERIOD_MS);
+    if (condition != STATUS_CODE_OK) {
+      LOG_DEBUG("Read from ADC queue failed.\n");
+    } 
+    else {
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)process);
+    }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -79,23 +133,6 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
-  static I2CSettings i2c_settings = {
-    .scl = { .port = GPIO_PORT_B, .pin = 7U },
-    .sda = { .port = GPIO_PORT_B, .pin = 6U },
-    .speed = I2C_SPEED_STANDARD
-  };
-
-  static GpioAddress ready_pin = {
-    .port = GPIO_PORT_B,
-    .pin = 0U,
-  };
-
-  static ADS1115_Config ads1115_cfg = {
-    .i2c_addr = ADS1115_ADDR_GND,
-    .i2c_port = ADS1115_I2C_PORT,
-    .ready_pin = &ready_pin,
-  };
-
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
   ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
 
@@ -105,12 +142,16 @@ int main() {
   log_init();
 
   /* Initialize RTOS tasks */
-  tasks_init();
+  tasks_init(); 
 
   mcu_init();
+  queue_init(&ads1115_data_queue);
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(1U), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(2U), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(3U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
