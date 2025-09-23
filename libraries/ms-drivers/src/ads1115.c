@@ -68,7 +68,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   return STATUS_CODE_OK;
 }
 
-StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, uint16_t *reading) {
+StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, *reading, 2);

@@ -109,7 +109,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
  *          STATUS_CODE_INVALID_ARGS if any parameter is invalid
  *          STATUS_CODE_INTERNAL_ERROR on I2C failure
  */
-StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, uint16_t *reading);
+StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading);
 
 /**
  * @brief   Reads and converts the ADC value from the specified channel into a voltage.
