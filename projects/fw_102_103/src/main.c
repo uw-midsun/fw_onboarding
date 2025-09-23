@@ -26,6 +26,8 @@
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3
 };
 
 static Queue ads1115_data_queue = {
@@ -75,6 +77,10 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+
+  mcu_init();
+
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
