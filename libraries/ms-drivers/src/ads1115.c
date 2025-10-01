@@ -62,6 +62,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   /* --------------------- FW103 START --------------------- */
   /* Configure command to select the requested channel (Channel N should be default GND) */
   cmd |= 0x4000U;
+  cmd |= (channel& 0x03) << 12;
   /* ---------------------- FW103 END ---------------------- */
 
   i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
@@ -70,14 +71,14 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, *reading, 2);
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, 2);
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
 
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
-  uint16_t raw;
+  int16_t raw;
   ads1115_read_raw(config, channel, &raw);
 
   *reading = 2.048 * raw / 32768;
