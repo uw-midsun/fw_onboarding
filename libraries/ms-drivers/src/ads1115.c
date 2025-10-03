@@ -28,7 +28,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
 
   /* --------------------- FW103 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
-  cmd = 0x0000;
+  cmd = (uint16_t)((0x4u << 12) | 0x0400 | 0x0003);
 
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
 
@@ -37,7 +37,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, (uint8_t *)(&cmd), 2);
 
   /* Configure higher threshold to be 1.5V */
-  cmd = 0x0000;
+  cmd = (uint16_t)(1.5f * 16000.0f);   // 1.5 V -> 24000 (0x5DC0)
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
   /* ---------------------- FW103 END ---------------------- */
 
@@ -53,6 +53,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   }
 
   uint16_t cmd;
+  cmd = (uint16_t)((0x4u | (uint16_t)channel) << 12);
 
   /* Read the current configuration register value */
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
@@ -71,14 +72,41 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
-  /* TODO: complete ADS1115 read raw function */
+   if (config == NULL || reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+
+  StatusCode status = ads1115_select_channel(config, channel);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+
+  // Read 16-bit two's complement conversion value
+  status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION,
+                        (uint8_t *)reading, sizeof(*reading));
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+
+  return STATUS_CODE_OK;
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
 
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
-  /* TODO: complete ADS1115 read converted function */
+    if (config == NULL || reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+
+  int16_t raw = 0;
+  StatusCode status = ads1115_read_raw(config, channel, &raw);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+
+  // ±2.048 V full-scale → LSB = 2.048/32768 V
+  *reading = ((float)raw / 32768.0f) * 2.048f;
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }

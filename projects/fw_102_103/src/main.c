@@ -26,6 +26,25 @@
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3,
+};
+
+static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+};
+
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
 };
 
 static Queue ads1115_data_queue = {
@@ -74,11 +93,44 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 
 int main() {
   /* --------------------- FW102 START --------------------- */
+  mcu_init();
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  gpio_init();
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* --------------------- FW102 END --------------------- */
-
+  
   /* Initialize printing module */
-  log_init();
+  log_init();  // make sure logger is up before LOG_DEBUG
+
+#if defined(MS_PLATFORM_X86)
+unsigned int seed = 0xC0FFEE;
+#endif
+
+for (int i = 0; i < 10; ++i) {             // or while (true) for continuous
+  // Toggle LED every second
+  gpio_toggle_state(&blinky_gpio);
+
+#if defined(MS_PLATFORM_X86)
+  // Feed the sim: ADS1115 does two reads (config then conversion) per sample
+  uint16_t dummy_cfg = 0x0123;
+  int16_t base = 22400;                                // ~1.4 V for ±2.048 FS
+  int16_t noise = (int16_t)((rand_r(&seed) % 1001) - 500);
+  int16_t simulated = base + noise;
+  i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&dummy_cfg, sizeof(dummy_cfg));
+  i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&simulated, sizeof(simulated));
+#endif
+
+  float v = 0.0f;
+  if (ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &v) == STATUS_CODE_OK) {
+    LOG_DEBUG("FW102: CH0 = %.3f V (LED toggled)\n", v);
+  } else {
+    LOG_DEBUG("FW102: ADS1115 read failed\n");
+  }
+
+  delay_ms(1000U);
+}
 
   /* Initialize RTOS tasks */
   tasks_init();
