@@ -74,7 +74,7 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
   ads1115_select_channel(config, channel);
-  StatusCode read_status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, reading, 2);
+  StatusCode read_status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, 2);
   /* ---------------------- FW103 END ---------------------- */
   return read_status;
 }
@@ -83,7 +83,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
   int16_t raw;
-  StatusCode read_status = ads1115_read_raw(config, channel, raw);
+  StatusCode read_status = ads1115_read_raw(config, channel, &raw);
   *reading = (float)raw / 32768.0 * 2.048;
   /* ---------------------- FW103 END ---------------------- */
   return read_status;
