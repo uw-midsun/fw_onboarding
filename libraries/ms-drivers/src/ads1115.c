@@ -33,12 +33,12 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
 
   /* Configure lower threshold to be 0V */
-  cmd = 0x0000;
-  i2c_write_reg(config->i2c_port, i2c_addr, 0, (uint8_t *)(&cmd), 2);
+  int16_t thresh_low = 0;
+  i2c_write_reg(config->i2c_port, i2c_addr, 0, (uint8_t *)(&thresh_low), 2);
 
   /* Configure higher threshold to be 1.5V */
-  cmd = 0x5DC0;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
+  int16_t thresh_high = 24000;
+  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&thresh_high), 2);
   /* ---------------------- FW103 END ---------------------- */
 
   // Register the ALRT pin
