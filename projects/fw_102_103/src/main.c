@@ -91,16 +91,25 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 }
 #endif
 
+TASK(read, TASK_STACK_256) {
+  float reading = 0;
+
+  while (true) {
+    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_2, &reading);
+    printf("%f\n", reading);
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
+}
+
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  mcu_init();
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
-  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
+  StatusCode result = ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   /* --------------------- FW102 END --------------------- */
 
-  mcu_init();
-
-  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
 
   /* Initialize printing module */
   log_init();
@@ -116,11 +125,8 @@ int main() {
   tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
 #endif
 
-  float reading;
-  while (true) {
-    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
-    printf("%f\n", reading);
-  }
+  tasks_init_task(read, TASK_PRIORITY(4U), NULL);
+
   /* Start RTOS scheduler */
   tasks_start();
 
