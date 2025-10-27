@@ -106,7 +106,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
 
   int16_t raw_reading = 0;
   // get raw_reading
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(&raw_reading), 2);
+  ads1115_read_raw(config, channel, &raw_reading);
 
   // convert raw to voltage
   // voltage = (raw_reading / 32767.0f) * 2.048f;
