@@ -30,22 +30,24 @@ static GpioAddress blinky_gpio = {
    .port = GPIO_PORT_B,
    .pin = 3,
 };
-  static I2CSettings i2c_settings = {
+ static I2CSettings i2c_settings = {
   .scl = { .port = GPIO_PORT_B, .pin = 7U },
   .sda = { .port = GPIO_PORT_B, .pin = 6U },
   .speed = I2C_SPEED_STANDARD
 };
-  static GpioAddress ready_pin = {
+static GpioAddress ready_pin = {
   .port = GPIO_PORT_B,
   .pin = 0U,
 };
   
-  static ADS1115_Config ads1115_cfg = {
+static ADS1115_Config ads1115_cfg = {
   .i2c_addr = ADS1115_ADDR_GND,
   .i2c_port = ADS1115_I2C_PORT,
   .ready_pin = &ready_pin,
 };
 
+// create a buffer big enough to holod
+// static uint8_t ads1115_data
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
@@ -54,6 +56,18 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (true)
+  {
+    if (gpio_get_state(&blinky_gpio))
+    {
+      LOG_DEBUG("LED is on");
+    } else
+    {
+      LOG_DEBUG("LED is off");
+    }
+    gpio_toggle_state(&blinky_gpio);
+    delay_ms(500);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -108,11 +122,11 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(2U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
   tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
-  tasks_init_task(ads1115_writer, TASK_PRIORITY(3U), NULL);
 #endif
   /* Start RTOS scheduler */
   tasks_start();
