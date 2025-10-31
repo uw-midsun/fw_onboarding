@@ -28,7 +28,6 @@ static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
   .port = GPIO_PORT_B,
   .pin = 3,
-
 };
 
 static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
