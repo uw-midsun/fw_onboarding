@@ -87,8 +87,8 @@ TASK(ads1115_writer, TASK_STACK_256) {
   } else
   {
     LOG_DEBUG("writing to queue: %f\n", (double)voltage);
-    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   };
+      delay_ms(ADS1115_SAMPLING_PERIOD_MS);
  }
   /* --------------------- FW103 END --------------------- */
 }
@@ -106,6 +106,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
     {
       LOG_DEBUG("received from queue: %f\n", (double)voltage);
     }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
     
   }
   /* --------------------- FW103 END --------------------- */
