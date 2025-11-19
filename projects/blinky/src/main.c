@@ -24,8 +24,9 @@ GpioAddress pa0_led = { .pin = 0U, .port = GPIO_PORT_A };
 TASK(blinky, TASK_STACK_512) {
   gpio_init_pin(&pa0_led, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   while (true) {
-    LOG_DEBUG("Blinky!\n");
+    LOG_DEBUG("Blinky Hello!\n");
     gpio_toggle_state(&pa0_led);
+    
     delay_ms(500);
   }
 }
