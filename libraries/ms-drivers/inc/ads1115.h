@@ -32,6 +32,9 @@
  */
 #define ALRT_EVENT 0U
 
+#define MAX_READING           32768
+#define MAX_VOLTAGE_READING   2.048
+
 /**
  * @brief Default I2C port used by the ADS1115.
  */
