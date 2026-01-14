@@ -67,6 +67,7 @@ typedef enum {
   ADS1115_REG_HI_THRESH,         /**< High threshold register for comparator */
 } ADS1115_Reg;
 
+
 /**
  * @brief Configuration structure for the ADS1115 driver.
  */
