@@ -61,7 +61,7 @@ TASK(ads1115_writer, TASK_STACK_256) {
 
   while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
-    LOG_DEBUG("Voltage: %f\n", reading);
+    LOG_DEBUG("Voltage: %f\n", (double)reading);
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
 
