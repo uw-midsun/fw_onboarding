@@ -89,10 +89,10 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   // Signed 16bit val
   int16_t raw_read = 0;
   // Call read_raw and pass raw_read as ref
-  ads1115_read_raw(config,  channel, &raw_read);
+  ads1115_read_raw(config, channel, &raw_read);
   // Ratio of raw/max_raw = V/max V taken with full range max
-  *reading = 2.048f * (raw_read / 32768.0f);  
-  
+  *reading = 2.048f * (raw_read / 32768.0f);
+
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }

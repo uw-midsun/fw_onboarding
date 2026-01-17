@@ -30,11 +30,7 @@ static GpioAddress blinky_gpio = {
   .pin = 3,
 };
 
-static I2CSettings i2c_settings = {
-  .scl = { .port = GPIO_PORT_B, .pin = 7U },
-  .sda = { .port = GPIO_PORT_B, .pin = 6U },
-  .speed = I2C_SPEED_STANDARD
-};
+static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
 
 static GpioAddress ready_pin = {
   .port = GPIO_PORT_B,
@@ -63,12 +59,12 @@ TASK(ads1115_writer, TASK_STACK_256) {
   /* This task will read from the ADS1115 external chip and push its data to a queue */
   float reading = 0.0f;
 
-  while (true){
+  while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
     LOG_DEBUG("Voltage: %f\n", reading);
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
-  
+
   /* --------------------- FW103 END --------------------- */
 }
 
