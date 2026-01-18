@@ -1,10 +1,23 @@
+/************************************************************************************************
+ * @file    main.c
+ *
+ * @brief   Main
+ *
+ * @date    2026-01-18
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
+
+/* Standard library Headers */
 #include <stdio.h>
+
 /* Inter-component Headers */
-#include "mcu.h"
 #include "gpio.h"
 #include "log.h"
-#include "tasks.h"
 #include "master_tasks.h"
+#include "mcu.h"
+#include "tasks.h"
+
+/* Intra-component Headers */
 
 void pre_loop_init() {}
 
@@ -16,7 +29,7 @@ void run_10hz_cycle() {
   /* This task runs at 10hz (100ms period) */
 }
 
-void run_1hz_cycle() { 
+void run_1hz_cycle() {
   static int count = 67;
   printf("Hello, World! %d\n", count++);
 }
