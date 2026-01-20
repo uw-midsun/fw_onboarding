@@ -61,22 +61,19 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  uint16_t cmd;
-
   /* Read the current configuration register value */
-  StatusCode status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
-
-  if (status != STATUS_CODE_OK) return status;
+  uint16_t cmd = 0x0483;
   /* Mask out the current channel bits (MUX bits are 12-14) */
   cmd &= ~0x7000;
 
   /* --------------------- FW103 START --------------------- */
   /* Configure command to select the requested channel (Channel N should be default GND) */
   cmd |= (uint16_t)((0x4 | channel) << 12);  // move the bits to 14 - 12 on the config reg
-  /* ---------------------- FW103 END ---------------------- */
+                                             /* ---------------------- FW103 END ---------------------- */
 
-  status = i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
-  return status;
+  i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
+
+  return STATUS_CODE_OK;
 }
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
@@ -85,11 +82,10 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  StatusCode status = ads1115_select_channel(config, channel);
-  if (status != STATUS_CODE_OK) {
-    return status;
-  }
-  return i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, sizeof(uint16_t));
+  ads1115_select_channel(config, channel);
+
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, sizeof(uint16_t));
+  return STATUS_CODE_OK;
   /* TODO: complete ADS1115 read raw function */
   /* ---------------------- FW103 END ---------------------- */
 }
@@ -97,10 +93,7 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
   int16_t raw = 0;
-  StatusCode status = ads1115_read_raw(config, channel, &raw);
-  if (status != STATUS_CODE_OK) {
-    return status;
-  }
+  ads1115_read_raw(config, channel, &raw);
 
   const float maxReading = 32768.0f;
   const float maxVoltage = 2.048f;
