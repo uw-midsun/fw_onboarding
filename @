@@ -1,0 +1,48 @@
+  ~/midnight_sun_workspace/fw_onboarding                              Size  
+    .cache                                                              -  
+    .git                                                                 -  
+    .github                                                              -  
+    autogen                                                              -  
+    build                                                               -  
+    doxygen                                                              -  
+    libraries                                                            -  
+   │  CMSIS                                                              -  
+   │  FreeRTOS                                                           -  
+   │  HAL                                                                -  
+   │  core                                                               -  
+   │  master                                                             -  
+   │  ms-common                                                          -  
+   │  ms-drivers                                                         -  
+   │ │  inc                                                              -  
+   │ │  src                                                              -  
+   │ │ └  ads1115.c                                        󰄱       3.3 KB  
+   │ │  test                                                             -  
+   │ └  config.json                                                   43 B  
+   │  ms-freertos                                                        -  
+   └  unity                                                              -  
+    platform                                                             -  
+    projects                                                             -  
+   │  blinky                                                             -  
+   │  fw_102_103                                                         -  
+   │ │  inc                                                              -  
+   │ │  src                                                              -  
+   │ │ └  main.c                                           󰄱      5.22 KB  
+   │ │  test                                                             -  
+   │ │ 󰂺 README.md                                                    842 B  
+   │ └  config.json                                                  121 B  
+   └  hello_world                                                        -  
+    py                                                                   -  
+    scons                                                                -  
+    smoke                                                                -  
+    .clang-format                                                  3.22 KB  
+    .gitignore                                                       387 B  
+    .pylintrc                                                     16.95 KB  
+   * .sconsign.dblite                                            318.22 KB  
+    CPPLINT.cfg                                                      614 B  
+    LICENSE                                                        1.04 KB  
+   󰂺 README.md                                                        655 B  
+   * SConstruct                                                     8.05 KB  
+    build_system.md                                                4.98 KB  
+    compile_commands.json                                       268.46 KB  
+    requirements.sh                                                2.83 KB  
+   󰈙 requirements.txt                                                 106 B  
