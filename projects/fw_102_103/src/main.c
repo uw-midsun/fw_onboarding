@@ -94,7 +94,7 @@ TASK(ads1115_writer, TASK_STACK_256) {
     if (queue_send(&ads1115_data_queue, &reading, ADS1115_SAMPLING_PERIOD_MS) != STATUS_CODE_OK) {
       LOG_DEBUG("write to queue failed\n");
     } else {
-      LOG_DEBUG("adc writing: %f\n", reading);
+      LOG_DEBUG("adc writing: %f\n", (double)reading);
     }
 
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
@@ -108,7 +108,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
 
   while (true) {
     if (queue_receive(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) {
-      LOG_DEBUG("adc reading %f\n", reading);
+      LOG_DEBUG("adc reading %f\n", (double)reading);
     } else {
       LOG_DEBUG("read from queue faied\n");
     }
