@@ -46,11 +46,11 @@ static ADS1115_Config ads1115_cfg = {
 };
 
 // define the buffer
-static uint8_t queue_buf[NUM_ITEMS*ITEM_SIZE];  
+static uint8_t queue_buf[NUM_ITEMS * ITEM_SIZE];
 
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
-  /* Hint: You will need to define an array to be used as the storage */ 
+  /* Hint: You will need to define an array to be used as the storage */
   .num_items = NUM_ITEMS,
   .item_size = ITEM_SIZE,
   .storage_buf = queue_buf,
@@ -59,7 +59,7 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
-  while (true){
+  while (true) {
     LOG_DEBUG("Blink - State: %d\n", gpio_get_state(&blinky_gpio));
     gpio_toggle_state(&blinky_gpio);
     delay_ms(BLINKY_PERIOD_MS);
@@ -74,8 +74,8 @@ TASK(ads1115_writer, TASK_STACK_256) {
 
   while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
-    StatusCode status = queue_send(&ads1115_data_queue, &reading, 1000); 
-    if (status == STATUS_CODE_OK){
+    StatusCode status = queue_send(&ads1115_data_queue, &reading, 1000);
+    if (status == STATUS_CODE_OK) {
       LOG_DEBUG("Writing to ADC queue: %f\n", (double)reading);
     } else {
       LOG_DEBUG("write to queue failed");
@@ -90,9 +90,9 @@ TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
   float receive = 0.0f;
-  while(true) {
+  while (true) {
     StatusCode status = queue_receive(&ads1115_data_queue, &receive, 1000);
-    if (status == STATUS_CODE_OK){
+    if (status == STATUS_CODE_OK) {
       LOG_DEBUG("Reading from ADC queue: %f\n", receive);
     } else {
       LOG_DEBUG("read from queue failed");
