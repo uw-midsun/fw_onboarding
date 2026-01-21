@@ -109,7 +109,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
 
   // Calculate Converted Voltage
   const int16_t MAX_READING = 32767;  // 32768 bits, 0 counts as one
-  const float MAX_VOLTAGE_READING = 2.048;
+  const float MAX_VOLTAGE_READING = 2.048f;
 
   *reading = ((float)raw_reading / (float)MAX_READING) * MAX_VOLTAGE_READING;
 

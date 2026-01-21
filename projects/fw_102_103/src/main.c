@@ -93,6 +93,8 @@ TASK(ads1115_writer, TASK_STACK_256) {
     // Send Copy of Voltage Reading to Queue
     if (queue_send(&ads1115_data_queue, &reading, ADS1115_SAMPLING_PERIOD_MS) != STATUS_CODE_OK) {
       LOG_DEBUG("write to queue failed\n");
+    } else {
+      LOG_DEBUG("adc writing: %f\n", reading);
     }
 
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
