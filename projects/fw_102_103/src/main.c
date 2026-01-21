@@ -24,6 +24,13 @@
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
+
+
+int main() {
+  mcu_init();
+  
+}
+
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
 };
