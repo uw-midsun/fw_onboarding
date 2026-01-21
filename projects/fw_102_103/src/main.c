@@ -93,7 +93,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
   while (true) {
     StatusCode status = queue_receive(&ads1115_data_queue, &receive, 1000);
     if (status == STATUS_CODE_OK) {
-      LOG_DEBUG("Reading from ADC queue: %f\n", receive);
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)receive);
     } else {
       LOG_DEBUG("read from queue failed");
     }
