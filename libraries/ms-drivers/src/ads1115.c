@@ -90,7 +90,7 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
   ads1115_select_channel(config, channel);
 
   // Read Config From Conversion Register (NOTE uint16_t = 16 bits = 2 bytes)
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)&reading, sizeof(*reading));
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, sizeof(*reading));
 
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
@@ -108,10 +108,10 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   ads1115_read_raw(config, channel, &raw_reading);
 
   // Calculate Converted Voltage
-  const int16_t MAX_READING = 32768;  // 32768 bits
+  const int16_t MAX_READING = 32767;  // 32768 bits, 0 counts as one
   const float MAX_VOLTAGE_READING = 2.048;
 
-  *reading = (raw_reading / MAX_READING) * MAX_VOLTAGE_READING;
+  *reading = ((float)raw_reading / (float)MAX_READING) * MAX_VOLTAGE_READING;
 
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
