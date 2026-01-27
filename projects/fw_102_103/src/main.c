@@ -26,11 +26,30 @@
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3
 };
 
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+};
+
+static I2CSettings i2c_settings = {
+  .scl = {.port = GPIO_PORT_B, pin = 7U}, // clock line
+  .sda = { .port = GPIO_PORT_B, .pin = 6U }, // data line
+  .speed = I2C_SPEED_STANDARD // speed at which it goes?
+}
+
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT, 
+  .ready_pin = &ready_pin, // where the ready pin is..?
 };
 
 TASK(blinky, TASK_STACK_256) {
@@ -76,12 +95,18 @@ int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
   /* --------------------- FW102 END --------------------- */
+  mcu_init();
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
 
   /* Initialize printing module */
   log_init();
 
   /* Initialize RTOS tasks */
   tasks_init();
+
+  /* Initialize I2C and ADS1115 */
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
