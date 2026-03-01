@@ -1,0 +1,4 @@
+<map id="ADS1115_Config" name="ADS1115_Config">
+<area shape="rect" id="node1" title="Configuration structure for the ADS1115 driver." alt="" coords="5,93,135,119"/>
+<area shape="rect" id="node2" href="$structGpioAddress.html" title="Port and pin data." alt="" coords="18,5,122,31"/>
+</map>

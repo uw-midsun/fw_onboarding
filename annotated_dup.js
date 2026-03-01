@@ -1,0 +1,26 @@
+var annotated_dup =
+[
+    [ "AdcStatus", "structAdcStatus.html", null ],
+    [ "ADS1115_Config", "structADS1115__Config.html", "structADS1115__Config" ],
+    [ "Fsm", "structFsm.html", null ],
+    [ "GpioAddress", "structGpioAddress.html", "structGpioAddress" ],
+    [ "GpioInterrupt", "structGpioInterrupt.html", "structGpioInterrupt" ],
+    [ "I2CBuffer", "structI2CBuffer.html", null ],
+    [ "I2CPortData", "structI2CPortData.html", "structI2CPortData" ],
+    [ "I2CSettings", "structI2CSettings.html", "structI2CSettings" ],
+    [ "InterruptSettings", "structInterruptSettings.html", "structInterruptSettings" ],
+    [ "MPURegion", "structMPURegion.html", null ],
+    [ "MPURegionSettings", "structMPURegionSettings.html", null ],
+    [ "PersistHeader", "structPersistHeader.html", null ],
+    [ "PersistStorage", "structPersistStorage.html", null ],
+    [ "PwmInfo", "structPwmInfo.html", null ],
+    [ "Queue", "structQueue.html", "structQueue" ],
+    [ "Semaphore", "structSemaphore.html", "structSemaphore" ],
+    [ "SPIPortData", "structSPIPortData.html", "structSPIPortData" ],
+    [ "SpiSettings", "structSpiSettings.html", null ],
+    [ "State", "structState.html", null ],
+    [ "Task", "structTask.html", null ],
+    [ "UartPortData", "structUartPortData.html", "structUartPortData" ],
+    [ "UartSettings", "structUartSettings.html", "structUartSettings" ],
+    [ "X86Interrupt", "structX86Interrupt.html", "structX86Interrupt" ]
+];
