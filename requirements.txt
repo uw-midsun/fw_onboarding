@@ -9,4 +9,3 @@ PyYAML
 pyserial
 scons
 sv-ttk
-scons_compiledb
