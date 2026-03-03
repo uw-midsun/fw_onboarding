@@ -69,6 +69,14 @@ typedef struct {
  */
 StatusCode i2c_init(I2CPort i2c, const I2CSettings *settings);
 
+
+
+
+
+
+
+
+
 /**
  * @brief   Reads data using the I2C port from the specified address
  * @param   i2c Specifies which I2C port to read with
