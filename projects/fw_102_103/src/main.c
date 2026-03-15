@@ -47,26 +47,56 @@ static ADS1115_Config ads1115_cfg = {
   .ready_pin = &ready_pin,
 };
 
+static uint8_t s_ads1115_queue_buf[5 * sizeof(float)];
+
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = 5,
+  .item_size = sizeof(float),
+  .storage_buf = s_ads1115_queue_buf,
 };
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (true) {
+    gpio_toggle_state(&blinky_gpio);
+    GpioState state = gpio_get_state(&blinky_gpio);
+    if (state == GPIO_STATE_HIGH) {
+      LOG_DEBUG("blinky: on\n");
+    } else {
+      LOG_DEBUG("blinky: off\n");
+    }
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  while (true) {
+    float voltage;
+    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &voltage);
+    StatusCode s = queue_send(&ads1115_data_queue, &voltage, 1000);
+    if (s == STATUS_CODE_OK) { LOG_DEBUG("Writing to ADC queue: %f\n", voltage); }
+    else { LOG_DEBUG("error"); }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  while (true) {
+    float received;
+    StatusCode s = queue_receive(&ads1115_data_queue, &received, 1000);
+    if (s == STATUS_CODE_OK) { LOG_DEBUG("Reading from ADC queue: %f\n", received); }
+    else { LOG_DEBUG("error"); }
+    delay_ms(1000);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -109,6 +139,10 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  queue_init(&ads1115_data_queue);
+  tasks_init_task(blinky, TASK_PRIORITY(2U), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(2U), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(2U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
