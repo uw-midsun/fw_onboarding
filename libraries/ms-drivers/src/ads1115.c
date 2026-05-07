@@ -18,7 +18,7 @@
 /* Intra-component Headers */
 #include "status.h"
 
-//START HERE 
+// START HERE
 StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAddress *ready_pin) {
   if (config == NULL || ready_pin == NULL) {
     return STATUS_CODE_INVALID_ARGS;
@@ -75,11 +75,10 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
   /* TODO: complete ADS1115 read raw function */
   /* ---------------------- FW103 END ---------------------- */
 
-  //what i did
+  // what i did
   ads1115_select_channel(config, channel);
-  i2c_read_reg(config->i2c_port,config->i2c_addr,ADS1115_REG_CONVERSION,(uint8_t *)reading,2); 
-  //what i did
-
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, 2);
+  // what i did
 
   return STATUS_CODE_OK;
 }
@@ -89,7 +88,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* TODO: complete ADS1115 read converted function */
   /* ---------------------- FW103 END ---------------------- */
 
-  //what i did
+  // what i did
   int16_t raw_value;
   StatusCode status = ads1115_read_raw(config, channel, &raw_value);
   if (status != STATUS_CODE_OK) {
@@ -97,8 +96,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   }
 
   *reading = ((float)raw_value / 32768.0f) * 2.048f;
-  //what i did
+  // what i did
 
   return STATUS_CODE_OK;
 }
-

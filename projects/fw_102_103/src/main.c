@@ -25,8 +25,8 @@
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
 static GpioAddress blinky_gpio = {
-    .port = GPIO_PORT_B,
-    .pin = 3,
+  .port = GPIO_PORT_B,
+  .pin = 3,
 };
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
@@ -81,12 +81,7 @@ int main() {
   /* Initialize printing module */
   log_init();
 
-
-  static I2CSettings i2c_settings = {
-    .scl = { .port = GPIO_PORT_B, .pin = 7U },
-    .sda = { .port = GPIO_PORT_B, .pin = 6U },
-    .speed = I2C_SPEED_STANDARD
-  };
+  static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
   static GpioAddress ready_pin = {
     .port = GPIO_PORT_B,
     .pin = 0U,
@@ -100,15 +95,6 @@ int main() {
   ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* Initialize RTOS tasks */
   tasks_init();
-
-  
-
-
-
-
-
-
-
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
@@ -124,4 +110,3 @@ int main() {
   LOG_DEBUG("exiting main?");
   return 0;
 }
-
