@@ -83,7 +83,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* TODO: complete ADS1115 read converted function */
   int16_t raw_reading;
   StatusCode status = ads1115_read_raw(config, channel, &raw_reading);
-  if (status != STATUS_CODE_OK){
+  if (status != STATUS_CODE_OK) {
     return status;
   }
   *reading = ((float)raw_reading / 32768.0f) * 2.048f;
