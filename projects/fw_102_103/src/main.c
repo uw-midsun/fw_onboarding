@@ -48,15 +48,11 @@ static Queue ads1115_data_queue = {
 };
 
 TASK(blinky, TASK_STACK_256) {
-  while(true)
-  {
+  while (true) {
     gpio_toggle_state(&blinky_gpio);
-    if(gpio_get_state(&blinky_gpio) == GPIO_STATE_HIGH)
-    {
+    if (gpio_get_state(&blinky_gpio) == GPIO_STATE_HIGH) {
       LOG_DEBUG("Blinky Task - State =  On\n");
-    }
-    else
-    {
+    } else {
       LOG_DEBUG("Blinky Task - State = Off\n");
     }
     delay_ms(BLINKY_PERIOD_MS);
@@ -125,8 +121,7 @@ int main() {
   log_init();
 
   static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
-  
- 
+
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
   ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* Initialize RTOS tasks */
