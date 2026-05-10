@@ -44,7 +44,6 @@ static Queue ads1115_data_queue = {
   .num_items = 1,
   .item_size = sizeof(float),
   .storage_buf = ads1115_queue_buf,
-
 };
 
 TASK(blinky, TASK_STACK_256) {
