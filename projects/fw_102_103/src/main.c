@@ -82,7 +82,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
   while (true) {
     StatusCode status = queue_receive(&ads1115_data_queue, &voltage, 1000);
     if (status == STATUS_CODE_OK) {
-      LOG_DEBUG("Reading from ADC queue: %f\n",(double)voltage);
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)voltage);
     } else {
       LOG_DEBUG("Read Failed\n");
     }
