@@ -33,8 +33,8 @@ static GpioAddress blinky_gpio = {
 
 static I2CSettings i2c_settings = {
   .speed = I2C_SPEED_STANDARD,
-  .sda = { .port = GPIO_PORT_B, .pin = 11U },
-  .scl = { .port = GPIO_PORT_B, .pin = 10U },
+  .sda = { .port = GPIO_PORT_B, .pin = 7U },
+  .scl = { .port = GPIO_PORT_B, .pin = 6U },
 };
 
 /* ALRT/RDY pin (not used in x86 sim, but ads1115_init requires non-NULL) */
