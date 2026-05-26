@@ -13,6 +13,7 @@
 #include "ads1115.h"
 #include "delay.h"
 #include "gpio.h"
+#include "i2c.h"
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
@@ -26,6 +27,14 @@
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3U,
+};
+
+static I2CSettings i2c_settings = {
+  .speed = I2C_SPEED_STANDARD,
+  .sda = { .port = GPIO_PORT_B, .pin = 11U },
+  .scl = { .port = GPIO_PORT_B, .pin = 10U },
 };
 
 static Queue ads1115_data_queue = {
@@ -33,9 +42,14 @@ static Queue ads1115_data_queue = {
   /* Hint: You will need to define an array to be used as the storage */
 };
 
-TASK(blinky, TASK_STACK_256) {
+TASK(blinky, TASK_STACK_512) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (true) {
+    LOG_DEBUG("Blink - State: %d\n", gpio_get_state(&blinky_gpio));
+    gpio_toggle_state(&blinky_gpio);
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -75,6 +89,10 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  mcu_init();
+  gpio_init();
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
@@ -85,6 +103,7 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(3), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
