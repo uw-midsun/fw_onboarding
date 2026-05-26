@@ -37,9 +37,29 @@ static I2CSettings i2c_settings = {
   .scl = { .port = GPIO_PORT_B, .pin = 10U },
 };
 
+/* ALRT/RDY pin (not used in x86 sim, but ads1115_init requires non-NULL) */
+static GpioAddress ads1115_ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+
+static ADS1115_Config ads1115_cfg = {
+  .i2c_port = ADS1115_I2C_PORT,
+  .i2c_addr = ADS1115_ADDR_GND,
+  .ready_pin = &ads1115_ready_pin,
+};
+
+/* Queue carries one float (converted voltage) per item. */
+#define ADS1115_QUEUE_NUM_ITEMS 5U
+#define ADS1115_QUEUE_ITEM_SIZE sizeof(float)
+static uint8_t ads1115_queue_storage[ADS1115_QUEUE_NUM_ITEMS * ADS1115_QUEUE_ITEM_SIZE];
+
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = ADS1115_QUEUE_NUM_ITEMS,
+  .item_size = ADS1115_QUEUE_ITEM_SIZE,
+  .storage_buf = ads1115_queue_storage,
 };
 
 TASK(blinky, TASK_STACK_512) {
@@ -53,15 +73,38 @@ TASK(blinky, TASK_STACK_512) {
   /* --------------------- FW103 END --------------------- */
 }
 
-TASK(ads1115_writer, TASK_STACK_256) {
+TASK(ads1115_writer, TASK_STACK_512) {
   /* --------------------- FW103 START --------------------- */
-  /* This task will read from the ADS1115 external chip and push its data to a queue */
+  /* Read converted voltage from ADC and publish to the queue. */
+  while (true) {
+    float voltage = 0.0f;
+    StatusCode status = ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &voltage);
+    if (status == STATUS_CODE_OK) {
+      StatusCode send_status = queue_send(&ads1115_data_queue, &voltage, 0U);
+      if (send_status != STATUS_CODE_OK) {
+        LOG_DEBUG("write to queue failed\n");
+      } else {
+        LOG_DEBUG("Writing to ADC queue: %f\n", (double)voltage);
+      }
+    }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
-TASK(ads1115_reader, TASK_STACK_256) {
+TASK(ads1115_reader, TASK_STACK_512) {
   /* --------------------- FW103 START --------------------- */
-  /* This task will read from the queue containing ADS1115 data and process it */
+  /* Consume voltages from the queue and log each one. */
+  while (true) {
+    float voltage = 0.0f;
+    StatusCode status = queue_receive(&ads1115_data_queue, &voltage, 1000U);
+    if (status == STATUS_CODE_OK) {
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)voltage);
+    } else {
+      LOG_DEBUG("read from queue failed\n");
+    }
+    delay_ms(1000U);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -93,6 +136,7 @@ int main() {
   gpio_init();
   gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ads1115_ready_pin);
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
@@ -103,7 +147,11 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
-  tasks_init_task(blinky, TASK_PRIORITY(3), NULL);
+  queue_init(&ads1115_data_queue);
+
+  tasks_init_task(blinky, TASK_PRIORITY(2), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(3), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(3), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
