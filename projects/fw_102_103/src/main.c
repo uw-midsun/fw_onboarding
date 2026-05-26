@@ -94,23 +94,29 @@ TASK(ads1115_writer, TASK_STACK_512) {
 
 TASK(ads1115_reader, TASK_STACK_512) {
   /* --------------------- FW103 START --------------------- */
-  /* Consume voltages from the queue and log each one. */
+  /* Consume voltages from the queue and log each one.
+   * Block indefinitely on queue_receive so pacing is driven by the writer;
+   * an extra delay_ms here would cause the queue to fill and drop samples.
+   */
   while (true) {
     float voltage = 0.0f;
-    StatusCode status = queue_receive(&ads1115_data_queue, &voltage, 1000U);
+    StatusCode status = queue_receive(&ads1115_data_queue, &voltage, QUEUE_DELAY_BLOCKING);
     if (status == STATUS_CODE_OK) {
       LOG_DEBUG("Reading from ADC queue: %f\n", (double)voltage);
     } else {
       LOG_DEBUG("read from queue failed\n");
     }
-    delay_ms(1000U);
   }
   /* --------------------- FW103 END --------------------- */
 }
 
 #if defined(MS_PLATFORM_X86)
 TASK(ads1115_data_simulator, TASK_STACK_256) {
-  /* This task simulates the I2C data for simulated off-target testing */
+  /* This task simulates the I2C data for simulated off-target testing.
+   * The real ADS1115 sends 16-bit register payloads MSB-first on the wire,
+   * so the simulator must feed bytes in the same order or the driver's
+   * byte-assembly will produce swapped values.
+   */
 
   unsigned int noise_rand_seed = 0xDEADBEEF;
   uint16_t simulated_voltage = 22400; /* 1.4V */
@@ -122,8 +128,17 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
     int16_t noise = (rand_r(&noise_rand_seed) % 1001) - 500;
     uint16_t noisy_voltage = simulated_voltage + noise;
 
-    i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&dummy_cfg_reg_data, sizeof(dummy_cfg_reg_data));
-    i2c_set_rx_data(ADS1115_I2C_PORT, (uint8_t *)&noisy_voltage, sizeof(noisy_voltage));
+    uint8_t cfg_buf[2] = {
+      (dummy_cfg_reg_data >> 8) & 0xFF,
+      dummy_cfg_reg_data & 0xFF,
+    };
+    uint8_t voltage_buf[2] = {
+      (noisy_voltage >> 8) & 0xFF,
+      noisy_voltage & 0xFF,
+    };
+
+    i2c_set_rx_data(ADS1115_I2C_PORT, cfg_buf, sizeof(cfg_buf));
+    i2c_set_rx_data(ADS1115_I2C_PORT, voltage_buf, sizeof(voltage_buf));
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
 }

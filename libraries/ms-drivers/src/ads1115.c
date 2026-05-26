@@ -25,6 +25,8 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
 
   config->i2c_addr = i2c_addr;
   uint16_t cmd;
+  uint8_t buf[2];
+  StatusCode status;
 
   /* --------------------- FW103 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0)
@@ -39,19 +41,38 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
    *   [2]     COMP_LAT  = 0
    *   [1-0]   COMP_QUE  = 11  (disable comparator)
    * Binary: 0 000 010 0 100 0 0 0 11 = 0000 0100 1000 0011 = 0x0483
+   *
+   * ADS1115 expects 16-bit register payloads MSB-first on the wire
+   * (datasheet section 8.5). We construct the byte buffer explicitly
+   * so the code stays correct regardless of host endianness.
    */
   cmd = 0x0483U;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
+  buf[0] = (cmd >> 8) & 0xFF;
+  buf[1] = cmd & 0xFF;
+  status = i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, buf, 2);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
 
   /* Lower threshold = 0V => raw 0 */
   cmd = 0x0000U;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, (uint8_t *)(&cmd), 2);
+  buf[0] = (cmd >> 8) & 0xFF;
+  buf[1] = cmd & 0xFF;
+  status = i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, buf, 2);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
 
   /* Higher threshold = 1.5V
    * raw = V / V_FSR * FullScale = 1.5 / 2.048 * 32768 = 24000 = 0x5DC0
    */
   cmd = 0x5DC0U;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
+  buf[0] = (cmd >> 8) & 0xFF;
+  buf[1] = cmd & 0xFF;
+  status = i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, buf, 2);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
   /* ---------------------- FW103 END ---------------------- */
 
   // Register the ALRT pin
@@ -65,10 +86,15 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  uint16_t cmd;
+  uint8_t buf[2];
+  StatusCode status;
 
-  /* Read the current configuration register value */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
+  /* Read the current configuration register value (MSB-first on the wire). */
+  status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, buf, 2);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+  uint16_t cmd = ((uint16_t)buf[0] << 8) | buf[1];
 
   /* Mask out the current channel bits (MUX bits are 12-14) */
   cmd &= ~0x7000;
@@ -81,8 +107,10 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   cmd |= ((uint16_t)(0x4U | (uint16_t)channel) << 12U);
   /* ---------------------- FW103 END ---------------------- */
 
-  i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
-  return STATUS_CODE_OK;
+  /* Write back MSB-first to match wire format. */
+  buf[0] = (cmd >> 8) & 0xFF;
+  buf[1] = cmd & 0xFF;
+  return i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, buf, 2);
 }
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
@@ -97,8 +125,16 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
     return status;
   }
 
-  /* Read 2 bytes from the CONVERSION register (16-bit signed result). */
-  return i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, sizeof(*reading));
+  /* CONVERSION register is 16-bit MSB-first on the wire. Read into a byte
+   * buffer then assemble manually to be endianness-independent.
+   */
+  uint8_t buf[2];
+  status = i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, buf, 2);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+  *reading = (int16_t)(((uint16_t)buf[0] << 8) | buf[1]);
+  return STATUS_CODE_OK;
   /* ---------------------- FW103 END ---------------------- */
 }
 
