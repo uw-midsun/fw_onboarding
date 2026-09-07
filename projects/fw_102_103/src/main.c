@@ -84,7 +84,9 @@ TASK(ads1115_writer, TASK_STACK_256) {
 
     StatusCode status = queue_send(&ads1115_data_queue, &adc_reading, 1000U);
 
-    if (status != STATUS_CODE_OK) {
+    if (status == STATUS_CODE_OK) {
+      LOG_DEBUG("Writing to ADC queue: %f\n", (double)adc_reading);
+    } else {
       LOG_DEBUG("write to queue failed\n");
     }
 
@@ -104,7 +106,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
     StatusCode status = queue_receive(&ads1115_data_queue, &adc_reading, 1000U);
 
     if (status == STATUS_CODE_OK) {
-      LOG_DEBUG("Reading from ADC queue: %f\n", adc_reading);
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)adc_reading);
     } else {
       LOG_DEBUG("read from queue failed\n");
     }
