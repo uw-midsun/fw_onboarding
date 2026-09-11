@@ -79,7 +79,7 @@ TASK(ads1115_writer, TASK_STACK_256) {
   while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
     if (queue_send(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) {
-      LOG_DEBUG("Writing to ADC queue: %f\n", reading);
+      LOG_DEBUG("Writing to ADC queue: %f\n", (double)reading);
     } else {
       LOG_DEBUG("write to queue failed\n");
     }
@@ -96,7 +96,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
 
   while (true) {
     if (queue_receive(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) {
-      LOG_DEBUG("Reading from ADC queue: %f\n", reading);
+      LOG_DEBUG("Reading from ADC queue: %f\n", (double)reading);
     } else {
       LOG_DEBUG("read from queue failed\n");
     }
