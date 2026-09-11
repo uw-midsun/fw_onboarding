@@ -31,11 +31,7 @@ static GpioAddress blinky_gpio = {
   .pin = 3,
 };
 
-static I2CSettings i2c_settings = {
-  .scl = { .port = GPIO_PORT_B, .pin = 7U },
-  .sda = { .port = GPIO_PORT_B, .pin = 6U },
-  .speed = I2C_SPEED_STANDARD
-};
+static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
 
 static GpioAddress ready_pin = {
   .port = GPIO_PORT_B,
@@ -64,8 +60,7 @@ TASK(blinky, TASK_STACK_256) {
 
   const char *state;
 
-  while(true){
-    
+  while (true) {
     state = ((gpio_get_state(&blinky_gpio) == GPIO_STATE_LOW) ? "Blink - State: 0" : "Blink - State: 1");
     LOG_DEBUG("%s\n", state);
     gpio_toggle_state(&blinky_gpio);
@@ -81,9 +76,9 @@ TASK(ads1115_writer, TASK_STACK_256) {
 
   float reading;
 
-  while(true){
+  while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
-    if (queue_send(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK){
+    if (queue_send(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) {
       LOG_DEBUG("Writing to ADC queue: %f\n", reading);
     } else {
       LOG_DEBUG("write to queue failed\n");
@@ -96,12 +91,11 @@ TASK(ads1115_writer, TASK_STACK_256) {
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
-  
+
   float reading;
 
-  while(true){
-
-    if (queue_receive(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK){
+  while (true) {
+    if (queue_receive(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) {
       LOG_DEBUG("Reading from ADC queue: %f\n", reading);
     } else {
       LOG_DEBUG("read from queue failed\n");
@@ -109,7 +103,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
 
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
-  
+
   /* --------------------- FW103 END --------------------- */
 }
 
