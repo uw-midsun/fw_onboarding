@@ -21,8 +21,6 @@
 #include "hello_world.h"
 
 static int s_count = 0;
-static int s_100hz_count = 0;
-static int s_10hz_count = 0;
 
 static int prv_increment(int *value) {
   /* Keep the indefinitely running example from overflowing a signed integer. */
@@ -35,19 +33,11 @@ static int prv_increment(int *value) {
 
 void pre_loop_init(void) {
   s_count = 0;
-  s_100hz_count = 0;
-  s_10hz_count = 0;
 }
 
-void run_100hz_cycle(void) {
-  int count = prv_increment(&s_100hz_count);
-  LOG_DEBUG("100 Hz cycle %d\n", count);
-}
+void run_100hz_cycle(void) {}
 
-void run_10hz_cycle(void) {
-  int count = prv_increment(&s_10hz_count);
-  LOG_DEBUG("10 Hz cycle %d\n", count);
-}
+void run_10hz_cycle(void) {}
 
 void run_1hz_cycle(void) {
   int count = prv_increment(&s_count);
