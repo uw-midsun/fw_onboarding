@@ -17,9 +17,6 @@
 #include "mcu.h"
 #include "tasks.h"
 
-/* Intra-component Headers */
-#include "hello_world.h"
-
 static int s_count = 0;
 
 static int prv_increment(int *value) {
