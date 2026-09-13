@@ -27,7 +27,10 @@
 #define ADS1115_VOLTS_PER_COUNT (2.048f / 32768.0f)
 
 static bool prv_valid_config(const ADS1115_Config *config) {
-  return config != NULL && (unsigned int)config->i2c_port < NUM_I2C_PORTS && config->i2c_addr >= ADS1115_ADDR_GND && config->i2c_addr <= ADS1115_ADDR_SCL;
+  if (config == NULL || (unsigned int)config->i2c_port >= NUM_I2C_PORTS) {
+    return false;
+  }
+  return config->i2c_addr >= ADS1115_ADDR_GND && config->i2c_addr <= ADS1115_ADDR_SCL;
 }
 
 /* The ADS1115 transfers the most significant byte first, regardless of CPU byte order. */
@@ -63,15 +66,18 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   uint16_t previous;
   status_ok_or_return(prv_read_reg(config, ADS1115_REG_CONFIG, &previous));
   /* MUX 100, 101, 110, 111 select AIN0..AIN3 relative to GND. */
-  uint16_t selected = (previous & ~ADS1115_MUX_MASK) | ((0x4U + (uint16_t)channel) << 12U);
+  uint16_t channel_bits = (0x4U + (uint16_t)channel) << 12U;
+  uint16_t selected = (previous & ~ADS1115_MUX_MASK) | channel_bits;
   status_ok_or_return(prv_write_reg(config, ADS1115_REG_CONFIG, selected));
 
   if ((previous & ADS1115_MUX_MASK) != (selected & ADS1115_MUX_MASK)) {
     /* An in-progress conversion still uses the old channel. Allow that and a
      * complete new conversion, with oscillator/tick margin. Call from a task. */
-    static const uint16_t rates[] = { 8U, 16U, 32U, 64U, 128U, 250U, 475U, 860U };
-    uint16_t rate = rates[(previous >> 5U) & 0x7U];
-    delay_ms((2400U + rate - 1U) / rate + 1U);
+    static const uint16_t samples_per_second[] = { 8U, 16U, 32U, 64U, 128U, 250U, 475U, 860U };
+    uint16_t rate = samples_per_second[(previous >> 5U) & 0x7U];
+    /* Two conversion periods plus 20% margin, rounded up, and one RTOS tick. */
+    uint32_t settling_time_ms = (2400U + rate - 1U) / rate + 1U;
+    delay_ms(settling_time_ms);
   }
   return STATUS_CODE_OK;
 }
@@ -84,7 +90,11 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
   uint16_t raw;
   status_ok_or_return(prv_read_reg(config, ADS1115_REG_CONVERSION, &raw));
   /* Decode two's complement without relying on an out-of-range unsigned cast. */
-  *reading = (int16_t)((raw & 0x8000U) ? (int32_t)raw - 65536 : (int32_t)raw);
+  int32_t signed_raw = raw;
+  if (raw & 0x8000U) {
+    signed_raw -= 65536;
+  }
+  *reading = (int16_t)signed_raw;
   return STATUS_CODE_OK;
 }
 

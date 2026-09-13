@@ -80,13 +80,15 @@ TASK(ads1115_writer, TASK_STACK_512) {
     status = ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
     if (status != STATUS_CODE_OK) {
       LOG_DEBUG("ADC read failed: %d\n", status);
+      delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+      continue;
+    }
+
+    status = queue_send(&ads1115_data_queue, &reading, ADS1115_QUEUE_TIMEOUT_MS);
+    if (status == STATUS_CODE_OK) {
+      LOG_DEBUG("Writing to ADC queue: %f\n", (double)reading);
     } else {
-      status = queue_send(&ads1115_data_queue, &reading, ADS1115_QUEUE_TIMEOUT_MS);
-      if (status == STATUS_CODE_OK) {
-        LOG_DEBUG("Writing to ADC queue: %f\n", (double)reading);
-      } else {
-        LOG_DEBUG("write to queue failed: %d\n", status);
-      }
+      LOG_DEBUG("write to queue failed: %d\n", status);
     }
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
   }
