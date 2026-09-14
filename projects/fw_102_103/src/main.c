@@ -76,11 +76,9 @@ TASK(ads1115_writer, TASK_STACK_256) {
 
     if (ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &voltage) != STATUS_CODE_OK) {
       LOG_DEBUG("adc read failed\n");
-    } 
-    else if (queue_send(&ads1115_data_queue, &voltage, 1000U) != STATUS_CODE_OK) {
+    } else if (queue_send(&ads1115_data_queue, &voltage, 1000U) != STATUS_CODE_OK) {
       LOG_DEBUG("write to queue failed\n");
-    } 
-    else {
+    } else {
       LOG_DEBUG("Writing to ADC queue: %f\n", (double)voltage);
     }
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
