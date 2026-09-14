@@ -51,7 +51,7 @@ static Queue ads1115_data_queue = {
   .storage_buf = queue_storage,
 };
 
-TASK(blinky, TASK_STACK_512) {
+TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
   while (true) {
@@ -62,7 +62,7 @@ TASK(blinky, TASK_STACK_512) {
   /* --------------------- FW103 END --------------------- */
 }
 
-TASK(ads1115_writer, TASK_STACK_512) {
+TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
   // i2c register transfers need the scheduler running
@@ -88,7 +88,7 @@ TASK(ads1115_writer, TASK_STACK_512) {
   /* --------------------- FW103 END --------------------- */
 }
 
-TASK(ads1115_reader, TASK_STACK_512) {
+TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
   while (true) {
