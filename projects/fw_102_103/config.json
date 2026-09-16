@@ -5,5 +5,8 @@
         "ms-drivers",
         "master"
     ],
-    "can": false
+    "can": false,
+    "mocks": {
+        "test_fw_102_103": ["i2c_read_reg", "i2c_write_reg"]
+    }
 }
