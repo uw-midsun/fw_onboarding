@@ -25,7 +25,8 @@
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
 static GpioAddress blinky_gpio = {
-  /* --------------------- TODO: FW102 --------------------- */
+  .port = GPIO_PORT_B,
+  .pin = 3U,
 };
 
 static Queue ads1115_data_queue = {
@@ -74,14 +75,21 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 
 int main() {
   /* --------------------- FW102 START --------------------- */
-  /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  mcu_init();                           // Initialize system clocks and GPIO base
+  gpio_init();                          // Initialize the GPIO subsystem
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);  // Set LED pin as output
   /* --------------------- FW102 END --------------------- */
+
 
   /* Initialize printing module */
   log_init();
 
   /* Initialize RTOS tasks */
   tasks_init();
+  while (true) {
+    gpio_toggle_state(&blinky_gpio);  // Toggle LED state
+    delay_ms(1000);                   // Wait 1 second
+  }
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
