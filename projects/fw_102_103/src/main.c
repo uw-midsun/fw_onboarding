@@ -4,12 +4,13 @@
  * @brief  Main file for fw_102_103
  *
  * @date   2025-08-23
- * @author Midnight Sun Team #24 - MSXVI
+ * @author Julian Salvador - Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
 /* Standard library Headers */
 
 /* Inter-component Headers */
+#include <mcu.h>
 #include "ads1115.h"
 #include "delay.h"
 #include "gpio.h"
@@ -23,12 +24,37 @@
 /* TODO: FW103 Add reader task period. Feel free to play around with these values! */
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
+#define NUM_ITEMS 5
+#define ITEM_SIZE sizeof(uint32_t)
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
+   .port = GPIO_PORT_B,
+   .pin = 3,
+};
+ static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+};
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+  
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
 };
 
+// create a buffer big enough to hold
+// static uint8_t ads1115_data
+static uint8_t ADS_QUEUE_BUF[NUM_ITEMS * ITEM_SIZE];
 static Queue ads1115_data_queue = {
+  .num_items = NUM_ITEMS,
+  .item_size = ITEM_SIZE,
+  .storage_buf = ADS_QUEUE_BUF,
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
 };
@@ -36,18 +62,53 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (true)
+  {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("led is on!\n");  
+    delay_ms(BLINKY_PERIOD_MS);
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("led is off!\n");  
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+ float voltage = 0.0;
+ while (1)
+ {
+  ads1115_read_converted(&ads1115_cfg, ADS1115_ADDR_GND, &voltage);
+  
+  if (queue_send(&ads1115_data_queue, &voltage, 1000) != STATUS_CODE_OK){
+    LOG_DEBUG("FAILED: writing to queue\n");
+  } else
+  {
+    LOG_DEBUG("writing to queue: %f\n", (double)voltage);
+  };
+      delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+ }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  float voltage = 0.0;
+  while (1)
+  {
+    if (queue_receive(&ads1115_data_queue, &voltage, 1000) != STATUS_CODE_OK)
+    {
+      LOG_DEBUG("FAILED: receiving from queue\n");
+    } else
+    {
+      LOG_DEBUG("received from queue: %f\n", (double)voltage);
+    }
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+    
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -75,6 +136,11 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+  mcu_init();
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
+
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
@@ -82,15 +148,18 @@ int main() {
 
   /* Initialize RTOS tasks */
   tasks_init();
+  queue_init(&ads1115_data_queue);
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(2), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(2), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(2), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
   tasks_init_task(ads1115_data_simulator, TASK_PRIORITY(4U), NULL);
 #endif
-
   /* Start RTOS scheduler */
   tasks_start();
 
