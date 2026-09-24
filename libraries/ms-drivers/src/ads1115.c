@@ -11,7 +11,6 @@
 
 /* Inter-component Headers */
 #include "ads1115.h"
-
 #include "gpio_interrupts.h"
 #include "i2c.h"
 
@@ -77,7 +76,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
       break;
   }
   
-  cmd |= 0x0000U;
+
   /* ---------------------- FW103 END ---------------------- */
 
   i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
@@ -87,7 +86,8 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(&reading) , 2);
+  ads1115_select_channel(config, channel);
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(reading) , 2);
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
@@ -95,7 +95,9 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
-  float converted_voltage = (*reading / 32768.0) * 2.048;
+  int16_t raw_reading;
+  ads1115_read_raw(config, channel, &raw_reading);
+  *reading = (raw_reading / 32768.0) * 2.048;
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
