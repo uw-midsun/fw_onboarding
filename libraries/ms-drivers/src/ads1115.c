@@ -30,7 +30,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   /* Configure for continuous mode (MODE bit = 0) */
   cmd = 0x0483;
 
-  i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(&cmd), 2);
+  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(&cmd), 2);
 
   /* Configure lower threshold to be 0V */
   cmd = 0x0000;
@@ -72,6 +72,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
+  ads1115_select_channel(config, channel);
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)reading, 2);
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
