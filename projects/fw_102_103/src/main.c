@@ -25,12 +25,15 @@
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
 static GpioAddress blinky_gpio = {
-  /* --------------------- TODO: FW102 --------------------- */
+  /* --------------------- FW102 START --------------------- */
+  /* This creates the struct for the gpio pin */
+  /* --------------------- FW102 END --------------------- */
 };
 
 static Queue ads1115_data_queue = {
-  /* --------------------- TODO: FW103 --------------------- */
+  /* --------------------- FW103 START --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  /* --------------------- FW103 START --------------------- */
 };
 
 TASK(blinky, TASK_STACK_256) {
