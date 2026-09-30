@@ -16,13 +16,27 @@
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
-
+#include "i2c.h"
 /* Intra-component Headers */
 #include "fw_102_103.h"
 
 /* TODO: FW103 Add reader task period. Feel free to play around with these values! */
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
+static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+};
+static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+};
+static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
+};
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
@@ -36,6 +50,13 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  LOG_DEBUG("Blinky Task");
+  while(true) {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("Blinky GPIO state: %d", gpio_get_state(&blinky_gpio));
+    delay_ms(BLINKY_PERIOD_MS);
+  }
+
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -75,6 +96,23 @@ TASK(ads1115_data_simulator, TASK_STACK_256) {
 int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
+   mcu_init();
+   static I2CSettings i2c_settings = {
+  .scl = { .port = GPIO_PORT_B, .pin = 7U },
+  .sda = { .port = GPIO_PORT_B, .pin = 6U },
+  .speed = I2C_SPEED_STANDARD
+  };
+  static GpioAddress ready_pin = {
+  .port = GPIO_PORT_B,
+  .pin = 0U,
+  };
+  static ADS1115_Config ads1115_cfg = {
+  .i2c_addr = ADS1115_ADDR_GND,
+  .i2c_port = ADS1115_I2C_PORT,
+  .ready_pin = &ready_pin,
+  };
+  i2c_init(ADS1115_I2C_PORT, &i2c_settings);
+  ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
@@ -85,6 +123,7 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, TASK_PRIORITY(1U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
