@@ -118,11 +118,14 @@ VARS = {
     "env": env,
 }
 
-env.Tool("compilation_db")
-print("Creating CompilationDatabase...")
-compdb = env.CompilationDatabase()
-print(f"CompilationDatabase target: {compdb}")
-Default(compdb)
+try:
+    env.Tool("compilation_db")
+    print("Creating CompilationDatabase...")
+    compdb = env.CompilationDatabase()
+    print(f"CompilationDatabase target: {compdb}")
+    Default(compdb)
+except Exception as exc:
+    print(f"Skipping CompilationDatabase: {exc}")
 
 # Parse asan / tsan and Adding Sanitizer Argument to Environment Flags
 # Note platform needs to be explicitly set to x86
