@@ -29,7 +29,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   /* --------------------- FW103 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
   cmd = 0x0000;
-  uint16_t config_reg_data = 0x0483
+  uint16_t config_reg_data = 0x0483;
 
 
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
@@ -79,7 +79,7 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
   ads1115_select_channel(config, channel);
 
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION,
-  (uint8_t *)reading, sizeof(*reading))
+  (uint8_t *)reading, sizeof(*reading));
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
@@ -89,8 +89,8 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* TODO: complete ADS1115 read converted function */
   /* converted voltage = (raw/max)*max voltage reading?*/
   int16_t raw_reading = 0;
-  ads1115_read_raw(config, channel, &raw_reading)
-  *reading = ((float)raw_reading/32768.0f)*(2.048.0f)
+  ads1115_read_raw(config, channel, &raw_reading);
+  *reading = ((float)raw_reading/32768.0f)*(2.048f);
 
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;

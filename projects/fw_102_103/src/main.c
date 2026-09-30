@@ -50,6 +50,13 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  LOG_DEBUG("Blinky Task");
+  while(true) {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("Blinky GPIO state: %d", gpio_get_state(&blinky_gpio));
+    delay_ms(BLINKY_PERIOD_MS);
+  }
+
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -116,7 +123,7 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
-
+  tasks_init_task(blinky, TASK_PRIORITY(1U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
