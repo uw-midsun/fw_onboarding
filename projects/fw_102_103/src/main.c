@@ -49,27 +49,49 @@ static ADS1115_Config ads1115_cfg = {
 };
 
 // gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
-
+#define QUEUE_SIZE 4U
+#define ITEM_SIZE sizeof(uint32_t)
+static uint8_t queue_buffer[QUEUE_SIZE*ITEM_SIZE];
 static Queue ads1115_data_queue = {
   /* --------------------- TODO: FW103 --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = QUEUE_SIZE, 
+  .item_size = ITEM_SIZE,
+  .storage_buf = queue_buffer,
 };
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  while (true) {
+    LOG_DEBUG("BLINKY!\n");
+    gpio_toggle_state(&blinky_gpio);
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  while (true) {
+    float reading;
+    ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
+    if (queue_send(&ads1115_data_queue, &reading, ADS1115_SAMPLING_PERIOD_MS) != STATUS_CODE_OK) LOG_DEBUG("Write to queue failed.");
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  while (true) {
+    float reading;
+    if (queue_receive(&ads1115_data_queue, &reading, 1000U) == STATUS_CODE_OK) LOG_DEBUG("ADC Reading: %f\n", reading);
+    else LOG_DEBUG("Read from queue failed.");
+  }
+  
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -109,9 +131,11 @@ int main() {
   /* Initialize RTOS tasks */
   tasks_init();
 
+  tasks_init_task(blinky, TASK_PRIORITY(3), NULL);
+
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
-
+  queue_init(&ads1115_data_queue);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
