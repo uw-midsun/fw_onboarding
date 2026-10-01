@@ -28,7 +28,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
 
   /* --------------------- FW103 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
-  cmd = 0x4483;
+  cmd = 0x0483;
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
 
   /* Configure lower threshold to be 0V */
