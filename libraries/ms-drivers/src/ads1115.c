@@ -70,17 +70,17 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   /* Configure command to select the requested channel (Channel N should be default GND) */
   cmd |= 0x0000U;
   if (channel == 0) {
-    cmd |= (0 << 11);
     cmd |= (0 << 12);
+    cmd |= (0 << 13);
   } else if (channel == 1) {
-    cmd |= (1 << 11);
-    cmd |= (0 << 12);
+    cmd |= (1 << 12);
+    cmd |= (0 << 13);
   } else if (channel == 2) {
-    cmd |= (0 << 11);
-    cmd |= (1 << 12);
+    cmd |= (0 << 12);
+    cmd |= (1 << 13);
   } else {
-    cmd |= (1 << 11);
     cmd |= (1 << 12);
+    cmd |= (1 << 13);
   }
   cmd |= (1 << 14);
   /* ---------------------- FW103 END ---------------------- */
@@ -103,11 +103,11 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
-
-  i2c_read_reg(config->i2c_port,config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t*) &reading, 2);
-  LOG_DEBUG("BRKPT1: Reading: %d", (uint32_t) *reading);
+  uint16_t read_raw = 0;
+  i2c_read_reg(config->i2c_port,config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t*) &read_raw, 2);
   // reading buffer recieves data
-  *reading = (*reading / 32768.0) * 2.048;
+  *reading = ((float)read_raw / 32768.0f) * 2.048f;
+  LOG_DEBUG("BRKPT1: Reading: %d", (uint32_t) *reading);
   // max reading: 32768.
   // max voltage: 2.048 V
   /* ---------------------- FW103 END ---------------------- */

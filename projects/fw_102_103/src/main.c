@@ -21,9 +21,9 @@
 #include "fw_102_103.h"
 
 /* TODO: FW103 Add reader task period. Feel free to play around with these values! */
-#define READING_PERIOD 1000U
+#define READING_PERIOD 4000U
 #define BLINKY_PERIOD_MS 1000U
-#define ADS1115_SAMPLING_PERIOD_MS 1000U
+#define ADS1115_SAMPLING_PERIOD_MS 4000U
 #define NUM_ITEMS 5
 #define ITEM_SIZE sizeof(float)
 
@@ -77,6 +77,8 @@ TASK(ads1115_writer, TASK_STACK_256) {
     StatusCode code = queue_send(&ads1115_data_queue, &reading, ADS1115_SAMPLING_PERIOD_MS);
     if (code != STATUS_CODE_OK) {
       LOG_DEBUG("\n Write to queue failed \n");
+    } else {
+      LOG_DEBUG("\n Write to queue: %f \n",reading);
     }
   }
   /* --------------------- FW103 END --------------------- */
@@ -89,7 +91,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
   while (true) {
     StatusCode code = queue_receive(&ads1115_data_queue, &reading, READING_PERIOD);
     if (code == STATUS_CODE_OK) {
-      LOG_DEBUG("\n %f \n", reading);
+      LOG_DEBUG("\n Read from queue: %f \n", reading);
     } else {
       LOG_DEBUG("\n Read from queue failed \n");
     }
@@ -136,9 +138,9 @@ int main() {
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
   queue_init(&ads1115_data_queue);
-  tasks_init_task(blinky, 3, NULL);
   tasks_init_task(ads1115_writer, 1, NULL);
   tasks_init_task(ads1115_reader, 2, NULL);
+  tasks_init_task(blinky, 3, NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
