@@ -89,7 +89,7 @@ TASK(ads1115_writer, TASK_STACK_256) {
   float reading;
   while(true){
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
-    LOG_DEBUG("%.2f\n", reading);
+    LOG_DEBUG("Writing to ADC queue: %.6f\n", reading);
     if(queue_send(&new_queue, &reading, 1000) != STATUS_CODE_OK){
       LOG_DEBUG("failed");
     }
@@ -108,7 +108,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
     if(queue_receive(&new_queue, &readed, 1000) != STATUS_CODE_OK){
       LOG_DEBUG("failed");
     }
-    LOG_DEBUG("%.2f\n", readed);
+    LOG_DEBUG("Reading from ADC queue: %.6f\n", readed);
     delay_ms(1000);
   }
   /* --------------------- FW103 END --------------------- */
