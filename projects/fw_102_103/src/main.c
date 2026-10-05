@@ -11,9 +11,9 @@
 
 /* Inter-component Headers */
 #include "ads1115.h"
-#include "i2c.h"
 #include "delay.h"
 #include "gpio.h"
+#include "i2c.h"
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
@@ -21,11 +21,7 @@
 /* Intra-component Headers */
 #include "fw_102_103.h"
 
-static I2CSettings i2c_settings = {
-  .scl = { .port = GPIO_PORT_B, .pin = 7U },
-  .sda = { .port = GPIO_PORT_B, .pin = 6U },
-  .speed = I2C_SPEED_STANDARD
-};
+static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
 
 static GpioAddress ready_pin = {
   .port = GPIO_PORT_B,
@@ -39,12 +35,10 @@ static ADS1115_Config ads1115_cfg = {
 };
 
 #define NUM_ITEMS 1
-//#define ITEM_SIZE sizeof(uint32_t)
+// #define ITEM_SIZE sizeof(uint32_t)
 #define ITEM_SIZE sizeof(float)
 
-
-
-static uint8_t queue_buffer[NUM_ITEMS*ITEM_SIZE];
+static uint8_t queue_buffer[NUM_ITEMS * ITEM_SIZE];
 static Queue new_queue = {
   .num_items = 1,
   .item_size = ITEM_SIZE,
@@ -57,8 +51,8 @@ static Queue new_queue = {
 
 static GpioAddress blinky_gpio = {
   /* --------------------- TODO: FW102 --------------------- */
-    .port = GPIO_PORT_B,
-    .pin = 3,
+  .port = GPIO_PORT_B,
+  .pin = 3,
 };
 
 static Queue ads1115_data_queue = {
@@ -68,9 +62,9 @@ static Queue ads1115_data_queue = {
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
-  while(true){
+  while (true) {
     gpio_toggle_state(&blinky_gpio);
-    if(gpio_get_state(&blinky_gpio) == 1){
+    if (gpio_get_state(&blinky_gpio) == 1) {
       LOG_DEBUG("ON");
     } else {
       LOG_DEBUG("OFF");
@@ -87,10 +81,10 @@ TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
   float reading;
-  while(true){
+  while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &reading);
     LOG_DEBUG("Writing to ADC queue: %.6f\n", reading);
-    if(queue_send(&new_queue, &reading, 1000) != STATUS_CODE_OK){
+    if (queue_send(&new_queue, &reading, 1000) != STATUS_CODE_OK) {
       LOG_DEBUG("failed");
     }
     delay_ms(1000);
@@ -103,9 +97,9 @@ TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
   float readed;
-    while(true) {
+  while (true) {
     // Copies data from front of queue into receive
-    if(queue_receive(&new_queue, &readed, 1000) != STATUS_CODE_OK){
+    if (queue_receive(&new_queue, &readed, 1000) != STATUS_CODE_OK) {
       LOG_DEBUG("failed");
     }
     LOG_DEBUG("Reading from ADC queue: %.6f\n", readed);
@@ -153,7 +147,7 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
-  //tasks_init_task(blinky, TASK_PRIORITY(2), NULL);
+  // tasks_init_task(blinky, TASK_PRIORITY(2), NULL);
   tasks_init_task(ads1115_writer, TASK_PRIORITY(3), NULL);
   tasks_init_task(ads1115_reader, TASK_PRIORITY(3), NULL);
   /* --------------------- FW103 END --------------------- */

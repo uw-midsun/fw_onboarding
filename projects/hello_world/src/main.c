@@ -10,16 +10,16 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "mcu.h"
 #include "gpio.h"
 #include "log.h"
-#include "tasks.h"
 #include "master_tasks.h"
+#include "mcu.h"
+#include "tasks.h"
 
 /* Intra-component Headers */
 #include "hello_world.h"
 
-int16_t num{0};
+int16_t num{ 0 };
 
 void pre_loop_init() {}
 
@@ -41,7 +41,7 @@ int main() {
   init_master_tasks();
 
   tasks_start();
-  
+
   run_10hz_cycle();
 
   LOG_DEBUG("exiting main?");
