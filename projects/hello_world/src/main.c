@@ -19,7 +19,7 @@
 /* Intra-component Headers */
 #include "hello_world.h"
 
-int16_t num{ 0 };
+int16_t num = 0;
 
 void pre_loop_init() {}
 
