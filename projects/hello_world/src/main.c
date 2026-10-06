@@ -27,7 +27,7 @@ void run_100hz_cycle() {}
 
 void run_10hz_cycle() {
   LOG_DEBUG("Hello World %d\n", num1);
-  num++;
+  num1++;
   return;
 }
 
