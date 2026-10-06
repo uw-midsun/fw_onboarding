@@ -19,14 +19,14 @@
 /* Intra-component Headers */
 #include "hello_world.h"
 
-int16_t num = 0;
+int16_t num1 = 0;
 
 void pre_loop_init() {}
 
 void run_100hz_cycle() {}
 
 void run_10hz_cycle() {
-  LOG_DEBUG("Hello World %d\n", num);
+  LOG_DEBUG("Hello World %d\n", num1);
   num++;
   return;
 }
