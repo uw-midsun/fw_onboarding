@@ -106,6 +106,7 @@ float hi;
   ads1115_read_converted(&ads1115_cfg, 0, &hi);
 queue_send(&s_my_queue, &hi, 1000);
 delay_ms(1000);
+    LOG_DEBUG("Writing from ADC queue : %.2f\n", hi);;
 
 
 
@@ -120,7 +121,7 @@ TASK(ads1115_reader, TASK_STACK_256) {
   while(true) {
     queue_receive(&s_my_queue, &received, 1000);
     delay_ms(1000);
-    LOG_DEBUG("Received: %.2f\n", received);;
+    LOG_DEBUG("Reading from ADC queue : %.2f\n", received);;
   }
 
 
