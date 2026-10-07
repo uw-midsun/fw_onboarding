@@ -134,6 +134,7 @@ int main() {
   /* --------------------- FW102 START --------------------- */
   /* Initialize the MCU, I2C, ADS1115 and blinky GPIO */
   mcu_init();
+  gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
   ads1115_init(&ads1115_cfg, ADS1115_ADDR_GND, &ready_pin);
   /* --------------------- FW102 END --------------------- */
