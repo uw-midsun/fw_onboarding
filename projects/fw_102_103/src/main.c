@@ -48,7 +48,7 @@ static ADS1115_Config ads1115_cfg = {
 #define ITEM_SIZE sizeof(uint32_t)
 static uint8_t queue_buffer[QUEUE_SIZE * ITEM_SIZE];
 static Queue ads1115_data_queue = {
-  /* --------------------- TODO: FW103 --------------------- */
+  /* --------------------- FW103 START --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
   .num_items = QUEUE_SIZE,
   .item_size = ITEM_SIZE,

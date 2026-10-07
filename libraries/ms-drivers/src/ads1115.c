@@ -26,7 +26,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   config->i2c_addr = i2c_addr;
   uint16_t cmd;
 
-  /* --------------------- FW103 START --------------------- */
+  /* --------------------- FW102 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
   cmd = 0x0483;
 
@@ -39,7 +39,7 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
   /* Configure higher threshold to be 1.5V */
   cmd = 0x5DC0;
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
-  /* ---------------------- FW103 END ---------------------- */
+  /* ---------------------- FW102 END ---------------------- */
 
   // Register the ALRT pin
   /* TODO (optional) */
