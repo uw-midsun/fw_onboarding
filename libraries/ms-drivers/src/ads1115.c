@@ -28,16 +28,16 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
 
   /* --------------------- FW102 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
-  cmd = 0x0483; //changed MODE & OS bits to 0
+  cmd = 0x0483;  // changed MODE & OS bits to 0
 
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
 
   /* Configure lower threshold to be 0V */
-  cmd = 0x0000; //0V = 0*32769/2.048 = 0 = 0x0000
+  cmd = 0x0000;  // 0V = 0*32769/2.048 = 0 = 0x0000
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, (uint8_t *)(&cmd), 2);
 
   /* Configure higher threshold to be 1.5V */
-  cmd = 0x5DC0; //1.5V = 1.5*32769/2.048 = 24000 = 0x5DC0
+  cmd = 0x5DC0;  // 1.5V = 1.5*32769/2.048 = 24000 = 0x5DC0
   i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
   /* ---------------------- FW102 END ---------------------- */
 
@@ -62,7 +62,7 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 
   /* --------------------- FW102 START --------------------- */
   /* Configure command to select the requested channel (Channel N should be default GND) */
-  cmd |= (uint16_t)(1U<<14) | (uint16_t)(channel << 12); //set MUX bits to channel and set OS bit to 1
+  cmd |= (uint16_t)(1U << 14) | (uint16_t)(channel << 12);  // set MUX bits to channel and set OS bit to 1
   /* ---------------------- FW102 END ---------------------- */
 
   i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
@@ -80,7 +80,7 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW102 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
-  *reading = *reading/32768.0 * 2.048;
+  *reading = *reading / 32768.0 * 2.048;
   /* ---------------------- FW102 END ---------------------- */
   return STATUS_CODE_OK;
 }

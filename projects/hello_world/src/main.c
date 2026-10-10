@@ -11,11 +11,11 @@
 
 /* Inter-component Headers */
 #include "delay.h"
-#include "mcu.h"
 #include "gpio.h"
 #include "log.h"
-#include "tasks.h"
 #include "master_tasks.h"
+#include "mcu.h"
+#include "tasks.h"
 
 /* Intra-component Headers */
 #include "hello_world.h"
@@ -28,9 +28,9 @@ void run_10hz_cycle() {}
 
 void run_1hz_cycle() {
   int counter = 0;
-  while(true){
+  while (true) {
     counter++;
-    LOG_DEBUG("%d\n",counter);
+    LOG_DEBUG("%d\n", counter);
     delay_ms(1000);
   }
 }

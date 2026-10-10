@@ -24,11 +24,7 @@
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
 
-static I2CSettings i2c_settings = {
-  .scl = { .port = GPIO_PORT_B, .pin = 7U },
-  .sda = { .port = GPIO_PORT_B, .pin = 6U },
-  .speed = I2C_SPEED_STANDARD
-};
+static I2CSettings i2c_settings = { .scl = { .port = GPIO_PORT_B, .pin = 7U }, .sda = { .port = GPIO_PORT_B, .pin = 6U }, .speed = I2C_SPEED_STANDARD };
 
 static GpioAddress ready_pin = {
   .port = GPIO_PORT_B,
@@ -48,7 +44,6 @@ static GpioAddress blinky_gpio = {
   .pin = 3,
   /* --------------------- FW102 END --------------------- */
 };
-
 
 static Queue ads1115_data_queue = {
   /* --------------------- FW103 START --------------------- */
@@ -105,7 +100,7 @@ int main() {
   /* --------------------- FW102 END --------------------- */
 
   /* Initialize printing module */
-  log_init(); 
+  log_init();
 
   /* Initialize RTOS tasks */
   tasks_init();
