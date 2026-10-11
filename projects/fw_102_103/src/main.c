@@ -47,7 +47,7 @@ static GpioAddress blinky_gpio = {
   /* --------------------- FW102 END --------------------- */
 };
 
-static uint8_t ads1115_data_buf[NUM_QUEUE_ITEMS* QUEUE_ITEM_SIZE]; /* Storage for the queue */
+static uint8_t ads1115_data_buf[NUM_QUEUE_ITEMS * QUEUE_ITEM_SIZE]; /* Storage for the queue */
 
 static Queue ads1115_data_queue = {
   /* --------------------- FW103 START --------------------- */
@@ -79,12 +79,11 @@ TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
   float voltage;
-  while(true){
+  while (true) {
     ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &voltage);
-    if (queue_send(&ads1115_data_queue, &voltage,0) != STATUS_CODE_OK) {
+    if (queue_send(&ads1115_data_queue, &voltage, 0) != STATUS_CODE_OK) {
       LOG_DEBUG("write to queue failed\n");
-    }
-    else {
+    } else {
       LOG_DEBUG("ADC write to queue: %f\n", voltage);
     }
     delay_ms(ADS1115_SAMPLING_PERIOD_MS);
@@ -96,9 +95,9 @@ TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
   float voltage = 0;
-  while(true){
+  while (true) {
     if (queue_receive(&ads1115_data_queue, &voltage, 1000) == STATUS_CODE_OK) {
-      LOG_DEBUG("ADC read from queue: %f\n", voltage);  
+      LOG_DEBUG("ADC read from queue: %f\n", voltage);
     } else {
       LOG_DEBUG("read from queue failed\n");
     }
@@ -160,4 +159,3 @@ int main() {
   LOG_DEBUG("exiting main?");
   return 0;
 }
- 
