@@ -1,5 +1,8 @@
 {
     "libs": [
         "ms-common"
-    ]
+    ],
+    "mocks": {
+        "test_ads1115": ["i2c_read_reg", "i2c_write_reg", "delay_ms"]
+    }
 }

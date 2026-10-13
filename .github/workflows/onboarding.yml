@@ -1,0 +1,77 @@
+name: Onboarding checks
+
+on:
+  push:
+    branches: [fw_onboarding_sarbfateh]
+
+permissions:
+  contents: read
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container:
+      image: ghcr.io/uw-midsun/devcontainers/fwxvi:v0.2.3
+      options: --user 0
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build ARM projects
+        run: |
+          scons --project=hello_world --platform=arm
+          scons --project=fw_102_103 --platform=arm
+
+      - name: Build laptop projects
+        run: |
+          for project in blinky hello_world fw_102_103; do
+            scons --project="$project" --platform=x86
+          done
+
+      - name: Test ADS1115 driver
+        run: |
+          mkdir -p logs
+          scons test --library=ms-drivers --test=test_ads1115 --platform=x86 | tee logs/ads1115-tests.log
+          grep -q '10 Tests 0 Failures 0 Ignored' logs/ads1115-tests.log
+
+      - name: Run onboarding simulations
+        run: |
+          for project in blinky hello_world fw_102_103; do
+            set +e
+            timeout 8s stdbuf -oL -eL scons sim --project="$project" --platform=x86 > "logs/$project.log" 2>&1
+            result=$?
+            set -e
+            cat "logs/$project.log"
+            test "$result" -eq 124
+          done
+          grep -q 'Blinky!' logs/blinky.log
+          grep -q 'Hello World 1' logs/hello_world.log
+          grep -q 'Hello World 2' logs/hello_world.log
+          grep -q 'Create Task blinky' logs/fw_102_103.log
+          grep -q 'Create Task ads1115_writer' logs/fw_102_103.log
+          grep -q 'Create Task ads1115_reader' logs/fw_102_103.log
+          grep -q 'blinky - LED ON' logs/fw_102_103.log
+          grep -q 'blinky - LED OFF' logs/fw_102_103.log
+          if grep -Ei 'failed|critical|assertion' logs/fw_102_103.log; then exit 1; fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          output = Path('logs/fw_102_103.log').read_text()
+          written = re.findall(r'Writing to ADC queue: ([0-9.]+)', output)
+          received = re.findall(r'Reading from ADC queue: ([0-9.]+)', output)
+          assert len(written) >= 3 and len(received) >= 3
+          assert written[:3] == received[:3]
+          assert all(1.36 <= float(value) <= 1.44 for value in received)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: onboarding-output
+          path: logs/
+          if-no-files-found: ignore
