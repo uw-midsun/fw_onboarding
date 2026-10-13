@@ -1,3 +1,15 @@
+/************************************************************************************************
+ * @file    main.c
+ *
+ * @brief   Main
+ *
+ * @date    2026-10-13
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
+
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "ads1115.h"
 #include "delay.h"
 #include "fw_102_103.h"
@@ -5,6 +17,8 @@
 #include "log.h"
 #include "mcu.h"
 #include "queues.h"
+
+/* Intra-component Headers */
 
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U

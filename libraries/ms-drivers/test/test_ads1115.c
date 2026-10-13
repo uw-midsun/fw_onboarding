@@ -1,8 +1,21 @@
+/************************************************************************************************
+ * @file    test_ads1115.c
+ *
+ * @brief   Test Ads1115
+ *
+ * @date    2026-10-13
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
+
+/* Standard library Headers */
 #include <stdint.h>
 
+/* Inter-component Headers */
 #include "ads1115.h"
 #include "test_helpers.h"
 #include "unity.h"
+
+/* Intra-component Headers */
 
 static ADS1115_Config s_config;
 static GpioAddress s_ready_pin = { .port = GPIO_PORT_B, .pin = 0U };

@@ -1,9 +1,21 @@
-#include "ads1115.h"
+/************************************************************************************************
+ * @file    ads1115.c
+ *
+ * @brief   Ads1115
+ *
+ * @date    2026-10-13
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdbool.h>
 
+/* Inter-component Headers */
+#include "ads1115.h"
 #include "delay.h"
 #include "i2c.h"
+
+/* Intra-component Headers */
 #include "status.h"
 
 #define ADS1115_CONFIG_CONTINUOUS 0x0483U
