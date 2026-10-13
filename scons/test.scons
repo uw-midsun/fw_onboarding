@@ -34,12 +34,12 @@ def add_to_run_list(target, source, env):
 
 def add_test_targets(target, source, env):
     entry = ROOT.Dir(Path(target[0].path).relative_to(BIN_DIR.path))
-    config = parse_config(entry)
 
     if entry.path.startswith("libraries"):
         # libraries target will look like libraries/lib[name].a
         # extract the name and convert to the directory of the actual library
         entry = ROOT.Dir(f"libraries/{entry.name[3:-2]}")
+    config = parse_config(entry)
     # non-libraries has a main.o that needs to be removed from the source for tests
     sources_no_main = list(filter(lambda f: f.name != "main.o", source))
 
