@@ -85,7 +85,7 @@ StatusCode interrupt_exti_get_pending(uint8_t line, uint8_t *pending_bit) {
   if (line >= NUM_STM32L433X_INTERRUPT_CHANNELS || pending_bit == NULL) {
     return STATUS_CODE_INVALID_ARGS;
   }
-  /* Returns 1 if set, 0 if not */
+
   *pending_bit = (uint8_t)HAL_EXTI_GetPending(&s_exti_handles[line], EXTI_TRIGGER_RISING_FALLING);
   return STATUS_CODE_OK;
 }

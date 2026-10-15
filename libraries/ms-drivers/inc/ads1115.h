@@ -19,8 +19,6 @@
 /* Intra-component Headers */
 #include "status.h"
 
-/* Standard Library Headers */
-
 /**
  * @defgroup ADS1115
  * @brief    ADS1115 ADC driver

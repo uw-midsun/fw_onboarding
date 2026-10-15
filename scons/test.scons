@@ -43,7 +43,6 @@ def add_test_targets(target, source, env):
     # non-libraries has a main.o that needs to be removed from the source for tests
     sources_no_main = list(filter(lambda f: f.name != "main.o", source))
 
-    # create target for every test
     for test_file in entry.glob('test/*.c'):
         test_module_name = Path(test_file.path).stem
 
@@ -108,7 +107,6 @@ def run_test(target, source, env):
 
 env.Append(PROGEMITTER=add_test_targets)
 env.Append(LIBEMITTER=add_test_targets)
-# generate all test target names
 all_tests = []
 for entry in PROJ_DIR.glob('*') + LIB_DIR.glob('*') + SMOKE_DIR.glob('*'):
     for test_file in entry.glob('test/*.c'):

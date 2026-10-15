@@ -25,7 +25,6 @@ StatusCode gpio_register_interrupt(const GpioAddress *address, const InterruptSe
     return STATUS_CODE_RESOURCE_EXHAUSTED;
   }
 
-  // Register exti channel and enable interrupt
   status_ok_or_return(interrupt_exti_enable(address, settings));
 
   s_gpio_it_interrupts[address->pin].address = *address;

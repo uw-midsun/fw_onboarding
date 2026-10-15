@@ -5,7 +5,6 @@ import glob
 from sys import platform
 
 def parse_config(entry):
-    # Default config to empty for fields that don't exist
     ret = {
         'libs': [],
         'x86_libs': [],

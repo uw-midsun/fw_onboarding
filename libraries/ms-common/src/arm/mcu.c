@@ -50,9 +50,9 @@ static StatusCode SystemClock_Config(void) {
    * 8MHz * PLLN(20) = 160MHz
    * 160MHz / PLLR(2) = 80MHz SYSCLK
    */
-  RCC_OscInitStruct.PLL.PLLM = 2;  /* Divide */
-  RCC_OscInitStruct.PLL.PLLN = 20; /* Multiply */
-  RCC_OscInitStruct.PLL.PLLR = 2;  /* Divide */
+  RCC_OscInitStruct.PLL.PLLM = 2;
+  RCC_OscInitStruct.PLL.PLLN = 20;
+  RCC_OscInitStruct.PLL.PLLR = 2;
 
   /* Initialize PLLP and PLLQ even though they’re not used */
   RCC_OscInitStruct.PLL.PLLP = 7;
@@ -60,7 +60,6 @@ static StatusCode SystemClock_Config(void) {
 #endif
 
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
-    /* Initialization Error */
     return STATUS_CODE_INTERNAL_ERROR;
   }
 
@@ -82,7 +81,6 @@ static StatusCode SystemClock_Config(void) {
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK) {
-    /* Initialization Error */
     return STATUS_CODE_INTERNAL_ERROR;
   }
 

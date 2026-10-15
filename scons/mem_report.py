@@ -3,7 +3,6 @@ import os
 import sys
 
 
-# Path to main project binary file
 path_to_binary = sys.argv[1]
 
 ##########################################################                
@@ -24,7 +23,6 @@ if (os.path.isdir('build/arm/bin/libraries')):
   stream = os.popen('size build/arm/bin/libraries/*')
   size_info = stream.readlines()
 
-  # remove the first element (columns)
   columns = size_info[0]
   size_info.pop(0)
 
@@ -32,7 +30,6 @@ if (os.path.isdir('build/arm/bin/libraries')):
   for size in size_info:
       size_info_list.append(size.split(None, 5))
 
-  # sorts by the 'dec' and 'bss' columns
   size_info_dec = sorted(size_info_list, key = lambda x: int(x[3]), reverse=True)
   size_info_bss = sorted(size_info_list, key = lambda x: int(x[2]), reverse=True)
 
@@ -68,7 +65,6 @@ with open('build/out.map') as file:
         bss_data.append(row)
       
 if (len(bss_data) != 0):
-  # sorts bss_data by size of the object 
   def order_by_size(data):
     return int(data[2], 16)
 

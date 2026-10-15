@@ -7,14 +7,11 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdint.h>
 
-/* Inter-component Headers */
 #include "can.h"
 #include "system_can.h"
 
-/* Intra-component Headers */
 #include "can_codegen.h"
 {% set messages = messages | selectattr("sender", "eq", project_name) | list -%}
 

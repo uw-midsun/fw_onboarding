@@ -29,7 +29,6 @@ int _write(int file, char *ptr, int len) {
 }
 
 void retarget_init() {
-  /* Enable UART clock */
   __HAL_RCC_USART1_CLK_ENABLE();
 
   /* Debug UART is Pins B6 and B7 */
@@ -51,7 +50,6 @@ void retarget_init() {
   hard_fault_uart.Init.OverSampling = UART_OVERSAMPLING_16;
 
   if (HAL_UART_Init(&hard_fault_uart) != HAL_OK) {
-    /* Hang the program if the UART Init fails */
     while (1) {
     }
   }

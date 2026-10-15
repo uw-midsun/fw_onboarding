@@ -14,10 +14,10 @@
 #include "gpio.h"
 #include "log.h"
 #include "mcu.h"
-#include "status.h"
 #include "tasks.h"
 
 /* Intra-component Headers */
+#include "status.h"
 
 TASK(sample_smoke, TASK_STACK_1024) {
   while (true) {

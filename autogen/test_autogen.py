@@ -21,7 +21,6 @@ def get_data(args):
     output_file = Path(args.output)
     input_file = Path(*output_file.parts[3:])
     
-    # set args.output to output_dir
     args.output = str(output_file.parent)
 
     tests = {"TEST_PRE_TASK": [], "TEST_IN_TASK": []}
@@ -31,13 +30,11 @@ def get_data(args):
         res = re.search('^\s*void \s*(test_([A-z0-9]|_)*)\s*\((void)?\)', line)
         if res != None:
             test_type = content[lineNum - 1].strip() if (lineNum > 0) else ''
-            # append to to correct test type, default to default_type if the type is not valid
             tests.get(test_type, tests[default_type]).append({
                 "name": res.group(1),
                 "line": lineNum + 1,
             })
 
-    # raise error if there are no tests
     if all([len(tests) == 0 for test in tests.values()]):
         raise Exception(f"No tests specified in {input_file}")
 

@@ -25,9 +25,9 @@ StatusCode event_from_notification(uint32_t *notification, Event *event) {
     *event = INVALID_EVENT;
     return STATUS_CODE_OK;
   }
-  /* Get index of first event */
+
   *event = 31 - __builtin_clz(*notification);
-  /* Clear bit */
+
   *notification = *notification & ~(1u << *event);
 
   return STATUS_CODE_INCOMPLETE;
@@ -38,7 +38,7 @@ bool notify_check_event(uint32_t *notification, Event event) {
     LOG_DEBUG("Provided bad event\n");
     return false;
   }
-  // Check event bit in notification
+
   if ((1U << event) & *notification) {
     *notification &= ~(1U << event);
     return true;

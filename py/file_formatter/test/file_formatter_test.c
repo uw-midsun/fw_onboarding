@@ -6,6 +6,7 @@
  * @date    2025-04-29
  * @author  Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
+
 /* Standard library Headers */
 #include <string.h>
 

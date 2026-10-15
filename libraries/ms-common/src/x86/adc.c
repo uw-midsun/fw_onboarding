@@ -30,7 +30,6 @@ typedef struct AdcStatus {
   StaticSemaphore_t converting_semaphore;
 } AdcStatus;
 
-/* ADC1 peripheral status */
 static AdcStatus s_adc_status;
 
 /* Array of readings, in order of rank, which DMA will write to */

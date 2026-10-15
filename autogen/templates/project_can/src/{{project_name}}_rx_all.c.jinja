@@ -7,14 +7,11 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdint.h>
 
-/* Inter-component Headers */
 #include "can.h"
 #include "system_can.h"
 
-/* Intra-component Headers */
 #include "can_codegen.h"
 #include "can_watchdog.h"
 {% set messages = messages | selectattr("receiver", "contains", project_name) | list -%}
@@ -27,12 +24,7 @@ CanWatchDog s_{{message.name}}_msg_watchdog = {0, {{message.receiver[project_nam
 void can_rx_all() {
     CanMessage msg = { 0 };
     while (can_receive(&msg) == STATUS_CODE_OK) {
-        /* TODO: Not sure if loop is best way */
-        /* Might be O(n) */
-        /* If store all functions in callback array may be better? */
-        /* Or do some sort or binary search for O(lgn) */
 
-        /* Cache the data */
         uint64_t data = msg.data;
 
         switch (msg.id.raw) {
