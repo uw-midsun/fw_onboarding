@@ -7,11 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "master_tasks.h"
 
 #define MASTER_100HZ_TO_MS 10U

@@ -9,15 +9,12 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "task.h"
 
-/* Intra-component Headers */
 #include "ms_semaphore.h"
 #include "tasks.h"
 #include "uart.h"

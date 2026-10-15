@@ -7,16 +7,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdbool.h>
 
-/* Inter-component Headers */
 #include "log.h"
 #include "queues.h"
 #include "semaphore.h"
 #include "stdio.h"
 
-/* Intra-component Headers */
 #include "i2c.h"
 
 typedef enum I2CMode {
@@ -32,7 +29,7 @@ typedef struct {
 } I2CBuffer;
 
 typedef struct {
-  I2CSettings settings;           // I2C Config
+  I2CSettings settings;
   I2CBuffer i2c_tx_buf;           // RTOS data structures
   I2CBuffer i2c_rx_buf;           // RTOS data structures
   bool curr_mode;                 // Mode used in current transxn
@@ -72,13 +69,11 @@ StatusCode i2c_read(I2CPort i2c, I2CAddress addr, uint8_t *rx_data, size_t rx_le
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  // Set number of bytes to read
   s_port[i2c].num_rx_bytes = rx_len;
-  // Store address for this transaction
+
   s_port[i2c].current_addr = addr;
   s_port[i2c].curr_mode = I2C_MODE_RECEIVE;
 
-  // Receive data from queue
   // If less than requested is received, an error in the transaction has occurred
   for (size_t rx = 0; rx < rx_len; rx++) {
     if (queue_receive(&s_port[i2c].i2c_rx_buf.queue, &rx_data[rx], 0)) {
@@ -94,7 +89,6 @@ StatusCode i2c_write(I2CPort i2c, I2CAddress addr, uint8_t *tx_data, size_t tx_l
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  /* Copy data into the simulated queue */
   for (size_t tx = 0; tx < tx_len; tx++) {
     if (queue_send(&s_port[i2c].i2c_tx_buf.queue, &tx_data[tx], 0)) {
       queue_reset(&s_port[i2c].i2c_tx_buf.queue);
@@ -102,7 +96,6 @@ StatusCode i2c_write(I2CPort i2c, I2CAddress addr, uint8_t *tx_data, size_t tx_l
     }
   }
 
-  // Store address for this transaction
   s_port[i2c].current_addr = addr;
   s_port[i2c].curr_mode = I2C_MODE_TRANSMIT;
 

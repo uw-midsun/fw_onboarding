@@ -7,7 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,10 +14,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-/* Inter-component Headers */
 #include "log.h"
 
-/* Intra-component Headers */
 #include "interrupts.h"
 
 /**
@@ -64,7 +61,6 @@ static void s_nvic_handler(int signum, siginfo_t *info, void *context) {
     if ((s_nvic_handlers[interrupt_id].handler != NULL) && !s_nvic_handlers[interrupt_id].masked && s_nvic_handlers[interrupt_id].enabled && s_nvic_handlers[interrupt_id].pending) {
       s_nvic_handlers[interrupt_id].handler(interrupt_id);
 
-      /* Turn off pending after handler function has run */
       s_nvic_handlers[interrupt_id].pending = false;
     }
   }
@@ -103,16 +99,14 @@ static void s_sig_state_handler(int signum, siginfo_t *info, void *ptr) {
 }
 
 void interrupt_init(void) {
-  /* Assign the s_pid to be the process ID handling the interrupts */
+
   s_pid = getpid();
 
-  /* Signal handler action */
   struct sigaction act;
 
   /* SA_RESTART allows syscalls to be retried */
   act.sa_flags = SA_SIGINFO | SA_RESTART;
 
-  /* Emtpy blocking set since no signals are blocked to start */
   sigset_t block_mask;
   sigemptyset(&block_mask);
 
@@ -120,7 +114,6 @@ void interrupt_init(void) {
   sigaddset(&block_mask, SIGRTMIN + INTERRUPT_PRIORITY_LOW);
   act.sa_mask = block_mask;
 
-  /* Update both the NVIC and EXTI signal handler */
   act.sa_sigaction = s_nvic_handler;
   sigaction(SIGRTMIN + INTERRUPT_PRIORITY_LOW, &act, NULL);
   act.sa_sigaction = s_exti_handler;
@@ -130,7 +123,6 @@ void interrupt_init(void) {
   sigaddset(&block_mask, SIGRTMIN + INTERRUPT_PRIORITY_NORMAL);
   act.sa_mask = block_mask;
 
-  /* Update both the NVIC and EXTI signal handler */
   act.sa_sigaction = s_nvic_handler;
   sigaction(SIGRTMIN + INTERRUPT_PRIORITY_NORMAL, &act, NULL);
   act.sa_sigaction = s_exti_handler;
@@ -140,7 +132,6 @@ void interrupt_init(void) {
   sigaddset(&block_mask, SIGRTMIN + INTERRUPT_PRIORITY_HIGH);
   act.sa_mask = block_mask;
 
-  /* Update both the NVIC and EXTI signal handler */
   act.sa_sigaction = s_nvic_handler;
   sigaction(SIGRTMIN + INTERRUPT_PRIORITY_HIGH, &act, NULL);
   act.sa_sigaction = s_exti_handler;
@@ -150,8 +141,6 @@ void interrupt_init(void) {
   act.sa_mask = block_mask;
   act.sa_sigaction = s_sig_state_handler;
   sigaction(SIGRTMIN + NUM_INTERRUPT_PRIORITIES, &act, NULL);
-
-  /* Clear mock interrupt tables */
 
   for (uint8_t i = 0U; i < NUM_STM32L433X_INTERRUPT_CHANNELS; i++) {
     s_nvic_handlers[i].enabled = false;
@@ -169,17 +158,15 @@ void interrupt_init(void) {
 }
 
 StatusCode interrupt_nvic_enable(uint8_t irq_channel, InterruptPriority priority) {
-  /* Validate priority and irq_channel */
+
   if ((priority >= NUM_INTERRUPT_PRIORITIES && priority < configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY) || irq_channel >= NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  /* Check if channel is already enabled */
   if (s_nvic_handlers[irq_channel].enabled) {
     return STATUS_CODE_RESOURCE_EXHAUSTED;
   }
 
-  /* Enable the interrupt, unmask, and set priority */
   s_nvic_handlers[irq_channel].enabled = true;
   s_nvic_handlers[irq_channel].masked = false;
   s_nvic_handlers[irq_channel].priority = priority;
@@ -188,7 +175,7 @@ StatusCode interrupt_nvic_enable(uint8_t irq_channel, InterruptPriority priority
 }
 
 StatusCode interrupt_nvic_register_handler(uint8_t irq_channel, x86InterruptHandler handler, const InterruptSettings *settings) {
-  /* Validate settings and channel */
+
   if (settings == NULL || settings->type >= NUM_INTERRUPT_TYPES || settings->edge >= NUM_INTERRUPT_EDGES || irq_channel > NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;
   }
@@ -204,7 +191,6 @@ StatusCode interrupt_nvic_register_handler(uint8_t irq_channel, x86InterruptHand
 }
 
 StatusCode interrupt_nvic_trigger(uint8_t irq_channel) {
-  /* Validate channel */
 
   if (irq_channel >= NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;

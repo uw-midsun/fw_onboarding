@@ -7,9 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "stm32l433xx.h"
@@ -18,7 +15,6 @@
 #include "stm32l4xx_hal_i2c_ex.h"
 #include "stm32l4xx_hal_rcc.h"
 
-/* Intra-component Headers */
 #include "i2c.h"
 #include "interrupts.h"
 
@@ -62,7 +58,6 @@ static SemaphoreHandle_t s_i2c_port_handle[NUM_I2C_PORTS];
 static StaticSemaphore_t s_i2c_cmplt_sem[NUM_I2C_PORTS];
 static SemaphoreHandle_t s_i2c_cmplt_handle[NUM_I2C_PORTS];
 
-/* Private helper for common TX/RX operations */
 static StatusCode s_i2c_transfer(I2CPort i2c, I2CAddress addr, uint8_t *data, size_t len, bool is_rx) {
   if (data == NULL || i2c >= NUM_I2C_PORTS || len > I2C_MAX_NUM_DATA) {
     return STATUS_CODE_INVALID_ARGS;
@@ -72,7 +67,6 @@ static StatusCode s_i2c_transfer(I2CPort i2c, I2CAddress addr, uint8_t *data, si
     return STATUS_CODE_UNINITIALIZED;
   }
 
-  /* Take the mutex for this I2C port */
   if (xSemaphoreTake(s_i2c_port_handle[i2c], pdMS_TO_TICKS(I2C_TIMEOUT_MS)) != pdTRUE) {
     return STATUS_CODE_TIMEOUT;
   }
@@ -103,7 +97,6 @@ static StatusCode s_i2c_transfer(I2CPort i2c, I2CAddress addr, uint8_t *data, si
   return STATUS_CODE_OK;
 }
 
-/* Private helper to handle transfer complete */
 static void s_i2c_transfer_complete_callback(I2C_HandleTypeDef *hi2c, bool is_rx) {
   BaseType_t higher_priority_task = pdFALSE;
 
@@ -131,12 +124,10 @@ void I2C2_ER_IRQHandler(void) {
   HAL_I2C_ER_IRQHandler(&s_i2c_handles[I2C_PORT_2]);
 }
 
-/* Callback functions for HAL I2C TX */
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
   s_i2c_transfer_complete_callback(hi2c, false);
 }
 
-/* Callback functions for HAL I2C RX */
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
   s_i2c_transfer_complete_callback(hi2c, true);
 }
@@ -154,23 +145,23 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
   uint32_t error = HAL_I2C_GetError(hi2c);
 
   if (error & HAL_I2C_ERROR_BERR) {
-    /* Future expansion */
+
   }
 
   if (error & HAL_I2C_ERROR_ARLO) {
-    /* Future expansion */
+
   }
 
   if (error & HAL_I2C_ERROR_AF) {
-    /* Future expansion */
+
   }
 
   if (error & HAL_I2C_ERROR_OVR) {
-    /* Future expansion */
+
   }
 
   if (error & HAL_I2C_ERROR_DMA) {
-    /* Future expansion */
+
   }
 
   /* Release the semaphores to prevent a deadlock where these are never returned from XFR complete */

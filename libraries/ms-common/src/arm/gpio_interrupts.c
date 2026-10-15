@@ -7,12 +7,8 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "log.h"
 
-/* Intra-component Headers */
 #include "gpio_interrupts.h"
 
 static GpioInterrupt s_gpio_it_interrupts[GPIO_PINS_PER_PORT] = { 0U };
@@ -25,7 +21,6 @@ StatusCode gpio_register_interrupt(const GpioAddress *address, const InterruptSe
     return STATUS_CODE_RESOURCE_EXHAUSTED;
   }
 
-  // Register exti channel and enable interrupt
   status_ok_or_return(interrupt_exti_enable(address, settings));
 
   s_gpio_it_interrupts[address->pin].address = *address;

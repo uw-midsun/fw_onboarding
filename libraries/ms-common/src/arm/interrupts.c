@@ -7,15 +7,12 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <string.h>
 
-/* Inter-component Headers */
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_cortex.h"
 #include "stm32l4xx_hal_exti.h"
 
-/* Intra-component Headers */
 #include "interrupts.h"
 
 static EXTI_HandleTypeDef s_exti_handles[GPIO_PINS_PER_PORT];
@@ -85,7 +82,7 @@ StatusCode interrupt_exti_get_pending(uint8_t line, uint8_t *pending_bit) {
   if (line >= NUM_STM32L433X_INTERRUPT_CHANNELS || pending_bit == NULL) {
     return STATUS_CODE_INVALID_ARGS;
   }
-  /* Returns 1 if set, 0 if not */
+
   *pending_bit = (uint8_t)HAL_EXTI_GetPending(&s_exti_handles[line], EXTI_TRIGGER_RISING_FALLING);
   return STATUS_CODE_OK;
 }

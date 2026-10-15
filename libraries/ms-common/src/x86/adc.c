@@ -7,16 +7,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stddef.h>
 #include <string.h>
 
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "delay.h"
 #include "semphr.h"
 
-/* Intra-component Headers */
 #include "adc.h"
 
 #define VREFINT_MV 3300U
@@ -30,7 +27,6 @@ typedef struct AdcStatus {
   StaticSemaphore_t converting_semaphore;
 } AdcStatus;
 
-/* ADC1 peripheral status */
 static AdcStatus s_adc_status;
 
 /* Array of readings, in order of rank, which DMA will write to */

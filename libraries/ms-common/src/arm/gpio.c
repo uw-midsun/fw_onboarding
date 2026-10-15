@@ -7,16 +7,12 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_gpio.h"
 #include "stm32l4xx_hal_rcc.h"
 #include "task.h"
 
-/* Intra-component Headers */
 #include "gpio.h"
 #include "interrupts.h"
 #include "status.h"

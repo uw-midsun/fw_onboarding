@@ -1,84 +1,64 @@
-/************************************************************************************************
- * @file    ads1115.c
- *
- * @brief   ADS1115 driver source file
- *
- * @date    2025-07-30
- * @author  Midnight Sun Team #24 - MSXVI
- ************************************************************************************************/
-
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "ads1115.h"
+#if !defined(MS_PLATFORM_X86)
+#include "delay.h"
+#endif
 
-#include "gpio_interrupts.h"
-#include "i2c.h"
+static StatusCode write_register(ADS1115_Config *config, uint8_t reg, uint16_t value) {
+  uint8_t data[] = { (uint8_t)(value >> 8U), (uint8_t)value };
+  return i2c_write_reg(config->i2c_port, config->i2c_addr, reg, data, sizeof(data));
+}
 
-/* Intra-component Headers */
-#include "status.h"
+static StatusCode read_register(ADS1115_Config *config, uint8_t reg, uint16_t *value) {
+  uint8_t data[2];
+  status_ok_or_return(i2c_read_reg(config->i2c_port, config->i2c_addr, reg, data, sizeof(data)));
+  *value = ((uint16_t)data[0] << 8U) | data[1];
+  return STATUS_CODE_OK;
+}
 
-StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAddress *ready_pin) {
-  if (config == NULL || ready_pin == NULL) {
+StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address address, GpioAddress *ready_pin) {
+  if (config == NULL || address < ADS1115_ADDR_GND || address > ADS1115_ADDR_SCL) {
     return STATUS_CODE_INVALID_ARGS;
   }
-
-  config->i2c_addr = i2c_addr;
-  uint16_t cmd;
-
-  /* --------------------- FW102 START --------------------- */
-  /* Configure for continuous mode (MODE bit = 0) */
-  cmd = 0x0000;
-
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
-
-  /* Configure lower threshold to be 0V */
-  cmd = 0x0000;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, (uint8_t *)(&cmd), 2);
-
-  /* Configure higher threshold to be 1.5V */
-  cmd = 0x0000;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
-  /* ---------------------- FW102 END ---------------------- */
-
-  // Register the ALRT pin
-  /* TODO (optional) */
-
-  return STATUS_CODE_OK;
+  config->i2c_addr = address;
+  config->ready_pin = ready_pin;
+  /* Continuous mode, +/-2.048 V, 128 SPS; comparator disabled. */
+  status_ok_or_return(write_register(config, ADS1115_REG_CONFIG, 0x0483U));
+  status_ok_or_return(write_register(config, ADS1115_REG_LO_THRESH, 0U));
+  /* 1.5 V / 62.5 uV per count = 24000. */
+  return write_register(config, ADS1115_REG_HI_THRESH, 0x5DC0U);
 }
 
 StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channel) {
-  if (config == NULL) {
+  if (config == NULL || (unsigned int)channel > ADS1115_CHANNEL_3) {
     return STATUS_CODE_INVALID_ARGS;
   }
-
-  uint16_t cmd;
-
-  /* Read the current configuration register value */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
-
-  /* Mask out the current channel bits (MUX bits are 12-14) */
-  cmd &= ~0x7000;
-
-  /* --------------------- FW102 START --------------------- */
-  /* Configure command to select the requested channel (Channel N should be default GND) */
-  cmd |= 0x0000U;
-  /* ---------------------- FW102 END ---------------------- */
-
-  i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
-  return STATUS_CODE_OK;
+  uint16_t value;
+  status_ok_or_return(read_register(config, ADS1115_REG_CONFIG, &value));
+  value = (value & ~0x7000U) | ((4U + (uint16_t)channel) << 12U);
+  return write_register(config, ADS1115_REG_CONFIG, value);
 }
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
-  /* --------------------- FW102 START --------------------- */
-  /* TODO: complete ADS1115 read raw function */
-  /* ---------------------- FW102 END ---------------------- */
+  if (reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+  status_ok_or_return(ads1115_select_channel(config, channel));
+#if !defined(MS_PLATFORM_X86)
+  /* Allow two conversion periods plus oscillator tolerance after a MUX switch. */
+  delay_ms(20U);
+#endif
+  uint16_t value;
+  status_ok_or_return(read_register(config, ADS1115_REG_CONVERSION, &value));
+  *reading = (int16_t)((int32_t)value - ((value & 0x8000U) ? 65536 : 0));
   return STATUS_CODE_OK;
 }
 
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
-  /* --------------------- FW102 START --------------------- */
-  /* TODO: complete ADS1115 read converted function */
-  /* ---------------------- FW102 END ---------------------- */
+  if (reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+  int16_t raw;
+  status_ok_or_return(ads1115_read_raw(config, channel, &raw));
+  *reading = raw * (2.048f / 32768.0f);
   return STATUS_CODE_OK;
 }

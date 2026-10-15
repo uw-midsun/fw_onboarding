@@ -7,18 +7,15 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* Inter-component Headers */
 #include "log.h"
 #include "semphr.h"
 #include "status.h"
 
-/* Intra-component Headers */
 #include "flash.h"
 
 /* Symbols from linker-scripts */
@@ -42,12 +39,11 @@ static FILE *s_flash_fp = NULL;
 #endif
 
 static StatusCode s_validate_address(uintptr_t address, size_t size) {
-  /* Check memory alignment */
+
   if (address % FLASH_MEMORY_ALIGNMENT != 0U || size % FLASH_MEMORY_ALIGNMENT != 0U) {
     return STATUS_CODE_INVALID_ARGS;
   }
 
-  /* Ensure adderss is in range */
   uint32_t flash_end = (uint32_t)_flash_start + (uint32_t)_flash_size;
   if (address < (uint32_t)_flash_start || address + size > flash_end) {
     return STATUS_CODE_OUT_OF_RANGE;
@@ -61,7 +57,6 @@ StatusCode flash_init() {
 
   LOG_DEBUG("Using flash file: %s\n", flash_filename);
 
-  // Opening the file or creating a new one if it does not exist
   s_flash_fp = fopen(flash_filename, "r+b");
   if (s_flash_fp == NULL) {
     LOG_DEBUG("Setting up new flash file...\n");
@@ -73,7 +68,6 @@ StatusCode flash_init() {
     flash_erase(0, NUM_FLASH_PAGES);
   }
 
-  // Initializing the mutex
   if (pthread_mutex_init(&s_flash_mutex, NULL) == 0) {
     return STATUS_CODE_OK;
   } else {
@@ -108,10 +102,8 @@ StatusCode flash_write(uintptr_t address, uint8_t *buffer, size_t buffer_len) {
 
   pthread_mutex_lock(&s_flash_mutex);
 
-  // Erase all memory to overwrite
   flash_erase(0, 128);
 
-  // Seek to memeory address and write
   fseek(s_flash_fp, (intptr_t)address, SEEK_SET);
   fwrite(buffer, 1, buffer_len, s_flash_fp);
   fflush(s_flash_fp);

@@ -9,13 +9,8 @@
  * @author  Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdint.h>
 #include <stdlib.h>
-
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 
 /**
  * @defgroup file_formatter_test

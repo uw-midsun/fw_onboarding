@@ -7,12 +7,8 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <string.h>
 
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "queues.h"
 
 StatusCode queue_init(Queue *queue) {

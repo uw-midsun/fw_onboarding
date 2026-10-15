@@ -7,9 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "semphr.h"
 #include "stm32l433xx.h"
@@ -17,7 +14,6 @@
 #include "stm32l4xx_hal_rcc.h"
 #include "stm32l4xx_hal_spi.h"
 
-/* Intra-component Headers */
 #include "interrupts.h"
 #include "spi.h"
 
@@ -136,7 +132,7 @@ StatusCode spi_init(SpiPort spi, const SpiSettings *settings) {
   s_spi_handles[spi].Init.FirstBit = SPI_FIRSTBIT_MSB;
   s_spi_handles[spi].Init.TIMode = SPI_TIMODE_DISABLE;
   s_spi_handles[spi].Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-  s_spi_handles[spi].Init.CRCPolynomial = 0U; /* CRC Not used */
+  s_spi_handles[spi].Init.CRCPolynomial = 0U;
   s_spi_handles[spi].Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
 
   switch (settings->mode) {

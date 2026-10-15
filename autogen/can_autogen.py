@@ -29,38 +29,30 @@ def check_yaml_file(data):
         - Invalid signal lengths (must be multiple of 8)
         - Total message length exceeding 64 bits
     """
-    # These are all the illegal characters
     illegal_chars_regex = re.compile('[@!#$%^&*()<>?/\|}{~:]')
     message_ids = set()
 
     for message_name, message in data["Messages"].items():
-        # Message has id
         if "id" not in message:
             raise Exception("Message " + message_name + " has no id")
 
-        # No same ids for messages within a board
         if message["id"] in message_ids:
             raise Exception("Duplicate id for message" + message_name)
-        # All ids are between 0-64
         elif message["id"] >= 64 or message["id"] < 0:
             raise Exception("Invalid message id")
         else:
             message_ids.add(message["id"])
 
-        # No illegal characters in message names
         if (illegal_chars_regex.search(message_name) != None):
             raise Exception("Illegal character in message name")
 
-        # Doesn't have more than 8 signals per message
         if len(message["signals"]) > 8:
             raise Exception("More than 8 signals in a message")
 
         message_length = 0
         for signal_name, signal in message["signals"].items():
-            # No illegal characters in signal names
             if (illegal_chars_regex.search(signal_name) != None):
                 raise Exception("Illegal character in signal name")
-            # All signals within a message are the same length
             if signal["length"] % 8 != 0:
                 raise Exception("Signal length must be a multiple of 8")
             message_length += signal['length']
@@ -102,7 +94,6 @@ def get_data(args):
     }
 
     for yaml_path in Path("can/boards").glob("*.yaml"):
-        # read yaml
         with open(yaml_path, "r") as f:
             data = yaml.load(f, Loader=yaml.FullLoader)
             check_yaml_file(data)  # check data is valid
@@ -126,7 +117,6 @@ def get_data(args):
                 })
                 start_bit += signal["length"]
 
-            # Determine the message Id
             # Packet structure:
             # | PRIORITY (1 bit) | MESSAGE ID (6 bits) | SOURCE (4 bits) |
 
@@ -140,7 +130,6 @@ def get_data(args):
                 "receiver": message["target"],
             })
 
-            # Update message counter
             if message["cycle"] == "fast":
                 message_count["fast_cycle"] += 1
             elif message["cycle"] == "medium":

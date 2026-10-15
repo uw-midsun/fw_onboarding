@@ -7,13 +7,10 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdbool.h>
 
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 
-/* Intra-component Headers */
 #include "log.h"
 #include "status.h"
 #include "tasks.h"
@@ -55,7 +52,6 @@ StatusCode tasks_init_task(Task *task, TaskPriority priority, void *context) {
     task->stack_size = TASK_MIN_STACK_SIZE;
   }
 
-  // Task already created
   if (task->handle != NULL) {
     return STATUS_CODE_OK;
   }
@@ -80,7 +76,7 @@ void tasks_start(void) {
 }
 
 StatusCode tasks_init(void) {
-  // Initialize the end task semaphore.
+
   s_end_task_handle = xSemaphoreCreateCountingStatic(MAX_NUM_TASKS, 0, &s_end_task_sem);
 
   if (s_end_task_handle == NULL) {

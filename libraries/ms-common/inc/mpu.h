@@ -9,13 +9,9 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdbool.h>
 #include <stdint.h>
 
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "status.h"
 
 /**

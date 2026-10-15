@@ -7,12 +7,8 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stddef.h>
 
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "status.h"
 #include "uart.h"
 

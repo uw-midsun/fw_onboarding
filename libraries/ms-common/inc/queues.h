@@ -9,13 +9,9 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "queue.h"
 
-/* Intra-component Headers */
 #include "status.h"
 
 /**

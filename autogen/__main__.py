@@ -39,20 +39,14 @@ def main():
     for template in template_dir.glob("**/*.jinja"):
         template_path = str(template.relative_to(template_dir))
 
-        # Create the file text by rendering it with provided data (Must be dictionary)
         output = env.get_template(template_path).render(**data)
 
-        # Create the output file name with provided data
-        # For example: template is called {{board}}_rx.c.jinja -> bms_carrier_rx.c.jinja
         output_file_name = env.from_string(template_path).render(**data)
 
-        # Create output file without the .jinja extension
         output_file = Path(args.output, output_file_name).with_suffix("")
         
-        # Create parent directories if it does not exist
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write output text to the file
         output_file.write_text(output)
 
     print("Done autogenerating")

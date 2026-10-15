@@ -7,13 +7,9 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "task.h"
 
-/* Intra-component Headers */
 #include "delay.h"
 #include "log.h"
 

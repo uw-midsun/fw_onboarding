@@ -7,17 +7,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include "stm32l4xx_hal_conf.h"
 
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "ms_semaphore.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_adc.h"
 #include "stm32l4xx_hal_dma.h"
 
-/* Intra-component Headers */
 #include "adc.h"
 #include "interrupts.h"
 
@@ -32,13 +29,10 @@ typedef struct AdcStatus {
   StaticSemaphore_t converting_semaphore;
 } AdcStatus;
 
-/* ADC1 peripheral status */
 static AdcStatus s_adc_status;
 
-/* ADC1 handler */
 static ADC_HandleTypeDef s_adc_handle;
 
-/* DMA1 handler */
 static DMA_HandleTypeDef s_dma_handle;
 
 /* Array of readings, in order of rank, which DMA will write to */
@@ -107,7 +101,6 @@ StatusCode adc_init(void) {
 
   __HAL_RCC_ADC_CLK_ENABLE();
 
-  /* Initialize ADC1 */
   s_adc_handle.Instance = ADC1;
   s_adc_handle.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   s_adc_handle.Init.Resolution = ADC_RESOLUTION12b;
@@ -141,7 +134,6 @@ StatusCode adc_init(void) {
     }
   }
 
-  /* Initialze DMA1 */
   __HAL_RCC_DMA1_CLK_ENABLE();
   s_dma_handle.Instance = DMA1_Channel1;
   s_dma_handle.Init.Direction = DMA_PERIPH_TO_MEMORY;

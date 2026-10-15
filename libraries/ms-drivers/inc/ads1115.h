@@ -9,17 +9,12 @@
  * @author Midnight Sun Team
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdint.h>
 
-/* Inter-component Headers */
 #include "gpio.h"
 #include "i2c.h"
 
-/* Intra-component Headers */
 #include "status.h"
-
-/* Standard Library Headers */
 
 /**
  * @defgroup ADS1115

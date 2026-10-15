@@ -7,11 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "mpu.h"
 
 StatusCode mpu_configure_region(MPURegion *region, MPURegionSettings *settings) {

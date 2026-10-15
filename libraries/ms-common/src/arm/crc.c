@@ -7,15 +7,11 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_crc.h"
 #include "stm32l4xx_hal_rcc.h"
 
-/* Intra-component Headers */
 #include "crc.h"
 
 static CRC_HandleTypeDef s_crc_handle;

@@ -7,12 +7,8 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdio.h>
 
-/* Inter-component Headers */
-
-/* Intra-component Headers */
 #include "ms_semaphore.h"
 
 StatusCode ms_mutex_init(Mutex *mutex) {

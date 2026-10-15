@@ -9,14 +9,11 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdbool.h>
 
-/* Inter-component Headers */
 #include "FreeRTOS.h"
 #include "semphr.h"
 
-/* Intra-component Headers */
 #include "status.h"
 
 /**

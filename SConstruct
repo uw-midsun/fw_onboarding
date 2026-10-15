@@ -234,7 +234,6 @@ else:  # command not recognised, default to build
 ###########################################################
 if PLATFORM == 'x86' and TARGET:
     project_elf = BIN_DIR.File(TARGET)
-    # os.exec the x86 project ELF file to simulate it
 
     def sim_run(target, source, env):
         print('Simulating', project_elf)
@@ -242,7 +241,6 @@ if PLATFORM == 'x86' and TARGET:
 
     AlwaysBuild(Command('#/sim', project_elf, sim_run))
 
-    # open gdb with the elf file
     def gdb_run(target, source, env):
         subprocess.run(['/usr/bin/gdb', project_elf.path])
 
@@ -253,13 +251,11 @@ if PLATFORM == 'x86' and TARGET:
 ###########################################################
 if PLATFORM == 'arm' and TARGET:
     project_bin = BIN_DIR.File(TARGET + '.bin')
-    # display memory info for the project
     if GetOption('mem-report'):
         AlwaysBuild(Command("#/mem-report", project_bin,
                             f"python3 scons/mem_report.py build/arm/bin/{TARGET}"))
         Default("#/mem-report")
 
-    # flash the MCU using openocd
     def flash_run_target(target, source, env):
         serialData = flash_run(project_bin, FLASH_TYPE)
         exit(0)

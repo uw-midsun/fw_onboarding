@@ -158,13 +158,11 @@ class CStyleFileFormatter(TemplateFileFormatter):
                 formatted.extend(sorted(data["includes"]["categories"].get(cat["name"], [])))
 
             if data["file_type"] == ".h":
-                # H files
                 content_start = max(
                     data["header_block"]["end_index"] + 1 if data["header_block"]["end_index"] >= 0 else 0,
                     data["pragma_once"]["index"] + 1 if data["pragma_once"]["index"] >= 0 else 0
                 )
             else:
-                # C files
                 content_start = data["header_block"]["end_index"] + 1 if data["header_block"]["end_index"] >= 0 else 0
 
             filtered = [
@@ -175,10 +173,8 @@ class CStyleFileFormatter(TemplateFileFormatter):
             ]
 
             if data["file_type"] == ".h":
-                # H files
                 return formatted + self._handle_doxygen_group(filtered, data)
 
-            # C files
             formatted.extend(filtered)
             return formatted
 
@@ -187,13 +183,11 @@ class CStyleFileFormatter(TemplateFileFormatter):
         last_include_end = self._find_last_include_boundary(lines, data)
 
         if data["file_type"] == ".h":
-            # H files
             base_start = max(data["header_block"]["end_index"], data["pragma_once"]["index"]) + 1
             formatted.extend(lines[base_start:last_include_end])
             remaining = lines[last_include_end:]
             return formatted + self._handle_doxygen_group(remaining, data)
 
-        # C files
         base_start = data["header_block"]["end_index"] + 1
         formatted.extend(lines[base_start:last_include_end])
         remaining = lines[last_include_end:]
@@ -222,12 +216,10 @@ class CStyleFileFormatter(TemplateFileFormatter):
             formatted.extend(content)
 
             if data["doxygen_groups"]["end_count"] != 1:
-                # Add the closing doxygen line
                 formatted.append("\n/** @} */\n")
         else:
             formatted.extend(content)
             if (data["doxygen_groups"]["defgroup_matches"] and len(data["doxygen_groups"]["defgroup_matches"]) > data["doxygen_groups"]["end_count"]):
-                # Add the closing doxygen line
                 formatted.append("\n/** @} */\n")
         return formatted
 
@@ -239,13 +231,11 @@ class CStyleFileFormatter(TemplateFileFormatter):
         @return int line number for the end of the include section
         """
         if data["file_type"] == ".h":
-            # H files
             last_include_index = max(
                 data["header_block"]["end_index"],
                 data["pragma_once"]["index"]
             ) + 1
         else:
-            # C files
             last_include_index = data["header_block"]["end_index"] + 1
 
         in_include_section = False

@@ -7,12 +7,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
-
-/* Intra-component Headers */
-
 #include "log.h"
 
 // Allocating memory for extern variables in .h files

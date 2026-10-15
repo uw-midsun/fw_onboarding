@@ -8,17 +8,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
 #include <stdint.h>
 #include <stdio.h>
 
-/* Inter-component Headers */
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_gpio.h"
 #include "stm32l4xx_hal_uart.h"
 #include "stm32l4xx_it.h"
 
-/* Intra-component Headers */
 #include "retarget.h"
 
 static UART_HandleTypeDef hard_fault_uart;
@@ -29,7 +26,7 @@ int _write(int file, char *ptr, int len) {
 }
 
 void retarget_init() {
-  /* Enable UART clock */
+
   __HAL_RCC_USART1_CLK_ENABLE();
 
   /* Debug UART is Pins B6 and B7 */
@@ -51,7 +48,7 @@ void retarget_init() {
   hard_fault_uart.Init.OverSampling = UART_OVERSAMPLING_16;
 
   if (HAL_UART_Init(&hard_fault_uart) != HAL_OK) {
-    /* Hang the program if the UART Init fails */
+
     while (1) {
     }
   }

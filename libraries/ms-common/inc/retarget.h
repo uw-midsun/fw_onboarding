@@ -9,12 +9,6 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-/* Standard library Headers */
-
-/* Inter-component Headers */
-
-/* Intra-component Headers */
-
 /**
  * @defgroup MCU
  * @brief    MCU library
