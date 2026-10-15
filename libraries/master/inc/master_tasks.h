@@ -9,8 +9,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "log.h"
 #include "tasks.h"
+
+/* Intra-component Headers */
 
 /**
  * @defgroup Master_Tasks

@@ -7,14 +7,17 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stddef.h>
 #include <string.h>
 
+/* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "delay.h"
-#include "semphr.h"
-
 #include "adc.h"
+#include "delay.h"
+
+/* Intra-component Headers */
+#include "semphr.h"
 
 #define VREFINT_MV 3300U
 #define ADC_MAX_VAL 4095U

@@ -9,6 +9,12 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+
+/* Intra-component Headers */
+
 /**
  * @defgroup Status_Code
  * @brief    Global error library

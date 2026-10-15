@@ -7,16 +7,21 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "i2c.h"
+
 #include "FreeRTOS.h"
+#include "interrupts.h"
+
+/* Intra-component Headers */
 #include "semphr.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_i2c.h"
 #include "stm32l4xx_hal_i2c_ex.h"
 #include "stm32l4xx_hal_rcc.h"
-
-#include "i2c.h"
-#include "interrupts.h"
 
 static inline void s_enable_i2c1(void) {
   __HAL_RCC_I2C1_CLK_ENABLE();
@@ -145,23 +150,23 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
   uint32_t error = HAL_I2C_GetError(hi2c);
 
   if (error & HAL_I2C_ERROR_BERR) {
-
+    /* Future expansion */
   }
 
   if (error & HAL_I2C_ERROR_ARLO) {
-
+    /* Future expansion */
   }
 
   if (error & HAL_I2C_ERROR_AF) {
-
+    /* Future expansion */
   }
 
   if (error & HAL_I2C_ERROR_OVR) {
-
+    /* Future expansion */
   }
 
   if (error & HAL_I2C_ERROR_DMA) {
-
+    /* Future expansion */
   }
 
   /* Release the semaphores to prevent a deadlock where these are never returned from XFR complete */

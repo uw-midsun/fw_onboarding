@@ -1,7 +1,21 @@
+/************************************************************************************************
+ * @file    ads1115.c
+ *
+ * @brief   Ads1115
+ *
+ * @date    2026-10-15
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
+
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "ads1115.h"
 #if !defined(MS_PLATFORM_X86)
 #include "delay.h"
 #endif
+
+/* Intra-component Headers */
 
 static StatusCode write_register(ADS1115_Config *config, uint8_t reg, uint16_t value) {
   uint8_t data[] = { (uint8_t)(value >> 8U), (uint8_t)value };

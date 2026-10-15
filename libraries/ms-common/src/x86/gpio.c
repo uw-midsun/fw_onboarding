@@ -7,12 +7,17 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "gpio.h"
+
 #include "FreeRTOS.h"
 #include "log.h"
-#include "status.h"
 #include "task.h"
 
-#include "gpio.h"
+/* Intra-component Headers */
+#include "status.h"
 
 static GpioMode s_gpio_pin_modes[GPIO_TOTAL_PINS];
 static uint8_t s_gpio_pin_state[GPIO_TOTAL_PINS];

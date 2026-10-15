@@ -7,9 +7,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "notify.h"
 
 #include "log.h"
+
+/* Intra-component Headers */
 
 StatusCode event_from_notification(uint32_t *notification, Event *event) {
   if (notification == NULL) {

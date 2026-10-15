@@ -7,10 +7,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stddef.h>
 
-#include "status.h"
+/* Inter-component Headers */
 #include "uart.h"
+
+/* Intra-component Headers */
+#include "status.h"
 
 StatusCode uart_init(UartPort uart, UartSettings *settings) {
   return STATUS_CODE_UNIMPLEMENTED;

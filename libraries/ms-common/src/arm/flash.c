@@ -7,15 +7,18 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <string.h>
 
+/* Inter-component Headers */
 #include "FreeRTOS.h"
+#include "flash.h"
+#include "misc.h"
+
+/* Intra-component Headers */
 #include "semphr.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_flash.h"
-
-#include "flash.h"
-#include "misc.h"
 
 /* Symbols from linker-scripts */
 extern uint32_t _flash_start;
@@ -30,7 +33,6 @@ static StaticSemaphore_t s_flash_mutex;
 static SemaphoreHandle_t s_flash_handle;
 
 static StatusCode s_validate_address(uintptr_t address, size_t size) {
-
   if (address % FLASH_MEMORY_ALIGNMENT != 0U || size % FLASH_MEMORY_ALIGNMENT != 0U) {
     return STATUS_CODE_INVALID_ARGS;
   }
@@ -58,7 +60,6 @@ StatusCode flash_read(uintptr_t address, uint8_t *buffer, size_t buffer_len) {
   }
 
   if (s_validate_address(address, buffer_len) == STATUS_CODE_OK) {
-
     memcpy(buffer, (void *)address, buffer_len);
   }
 

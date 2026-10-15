@@ -1,7 +1,21 @@
+/************************************************************************************************
+ * @file    check_adc.c
+ *
+ * @brief   Check Adc
+ *
+ * @date    2026-10-15
+ * @author  Midnight Sun Team #24 - MSXVI
+ ************************************************************************************************/
+
+/* Standard library Headers */
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+
+/* Inter-component Headers */
 #include "ads1115.h"
+
+/* Intra-component Headers */
 
 static uint16_t registers[4];
 static StatusCode read_failure, write_failure;

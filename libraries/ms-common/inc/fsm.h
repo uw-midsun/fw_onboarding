@@ -9,13 +9,16 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-#include "stdint.h"
+/* Standard library Headers */
 
+/* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "semphr.h"
-
-#include "status.h"
 #include "tasks.h"
+
+/* Intra-component Headers */
+#include "semphr.h"
+#include "status.h"
+#include "stdint.h"
 
 /**
  * @defgroup Finite_State_Machine

@@ -7,12 +7,15 @@
  * @author  Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <inttypes.h>
 
+/* Inter-component Headers */
 #include "flash.h"
 #include "log.h"
 #include "persist.h"
 
+/* Intra-component Headers */
 #include "status.h"
 
 // Erased flash defaults to all 1's
@@ -98,7 +101,6 @@ StatusCode persist_init(PersistStorage *persist, uint8_t page, void *blob, size_
 }
 
 StatusCode persist_commit(PersistStorage *persist) {
-
   if (persist->prev_flash_addr != PERSIST_INVALID_ADDR) {
     uint32_t invalid = 0;
     flash_write(persist->prev_flash_addr, (uint8_t *)&invalid, sizeof(invalid));

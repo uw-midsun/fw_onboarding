@@ -9,11 +9,16 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
 #include "gpio.h"
 #include "interrupts.h"
 #include "notify.h"
-#include "status.h"
 #include "tasks.h"
+
+/* Intra-component Headers */
+#include "status.h"
 
 /**
  * @defgroup GPIO

@@ -7,9 +7,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <string.h>
 
+/* Inter-component Headers */
 #include "queues.h"
+
+/* Intra-component Headers */
 
 StatusCode queue_init(Queue *queue) {
   queue->handle = xQueueCreateStatic(queue->num_items, queue->item_size, queue->storage_buf, &queue->queue);

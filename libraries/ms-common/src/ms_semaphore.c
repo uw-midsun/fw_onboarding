@@ -7,9 +7,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdio.h>
 
+/* Inter-component Headers */
 #include "ms_semaphore.h"
+
+/* Intra-component Headers */
 
 StatusCode ms_mutex_init(Mutex *mutex) {
   mutex->handle = xSemaphoreCreateMutexStatic(&mutex->buffer);

@@ -7,13 +7,17 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "blinky.h"
 #include "delay.h"
 #include "gpio.h"
 #include "log.h"
 #include "mcu.h"
 #include "tasks.h"
 
-#include "blinky.h"
+/* Intra-component Headers */
 
 GpioAddress pa0_led = { .pin = 0U, .port = GPIO_PORT_A };
 

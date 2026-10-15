@@ -7,16 +7,20 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-#include "stm32l4xx_hal_conf.h"
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "adc.h"
 
 #include "FreeRTOS.h"
+#include "interrupts.h"
 #include "ms_semaphore.h"
+
+/* Intra-component Headers */
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_adc.h"
+#include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_dma.h"
-
-#include "adc.h"
-#include "interrupts.h"
 
 #define VREFINT_MV 3300U
 #define ADC_MAX_VAL 4095U

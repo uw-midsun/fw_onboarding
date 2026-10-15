@@ -7,6 +7,11 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+
+/* Intra-component Headers */
 #include "spi.h"
 
 StatusCode spi_init(SpiPort spi, const SpiSettings *settings) {

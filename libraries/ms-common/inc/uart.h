@@ -9,9 +9,13 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdint.h>
 
+/* Inter-component Headers */
 #include "gpio.h"
+
+/* Intra-component Headers */
 
 /**
  * @defgroup UART

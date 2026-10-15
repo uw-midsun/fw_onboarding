@@ -7,11 +7,16 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "delay.h"
+
 #include "FreeRTOS.h"
+#include "log.h"
 #include "task.h"
 
-#include "delay.h"
-#include "log.h"
+/* Intra-component Headers */
 
 void delay_ms(uint32_t time_ms) {
   if (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {

@@ -7,13 +7,16 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdio.h>
 #include <string.h>
 
+/* Inter-component Headers */
 #include "gpio.h"
 #include "mcu.h"
 #include "retarget.h"
 
+/* Intra-component Headers */
 #include "stm32l4xx_hal.h"
 
 static StatusCode SystemClock_Config(void) {
@@ -57,7 +60,6 @@ static StatusCode SystemClock_Config(void) {
 #endif
 
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
-
     return STATUS_CODE_INTERNAL_ERROR;
   }
 
@@ -79,7 +81,6 @@ static StatusCode SystemClock_Config(void) {
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK) {
-
     return STATUS_CODE_INTERNAL_ERROR;
   }
 

@@ -7,16 +7,19 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+/* Inter-component Headers */
+#include "flash.h"
 #include "log.h"
+
+/* Intra-component Headers */
 #include "semphr.h"
 #include "status.h"
-
-#include "flash.h"
 
 /* Symbols from linker-scripts */
 // None are used in this case
@@ -39,7 +42,6 @@ static FILE *s_flash_fp = NULL;
 #endif
 
 static StatusCode s_validate_address(uintptr_t address, size_t size) {
-
   if (address % FLASH_MEMORY_ALIGNMENT != 0U || size % FLASH_MEMORY_ALIGNMENT != 0U) {
     return STATUS_CODE_INVALID_ARGS;
   }

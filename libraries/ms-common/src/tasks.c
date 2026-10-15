@@ -7,13 +7,16 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdbool.h>
 
+/* Inter-component Headers */
 #include "FreeRTOS.h"
-
 #include "log.h"
-#include "status.h"
 #include "tasks.h"
+
+/* Intra-component Headers */
+#include "status.h"
 
 static StaticSemaphore_t s_end_task_sem;
 static SemaphoreHandle_t s_end_task_handle = NULL;
@@ -76,7 +79,6 @@ void tasks_start(void) {
 }
 
 StatusCode tasks_init(void) {
-
   s_end_task_handle = xSemaphoreCreateCountingStatic(MAX_NUM_TASKS, 0, &s_end_task_sem);
 
   if (s_end_task_handle == NULL) {

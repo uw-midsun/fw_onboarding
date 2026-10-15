@@ -7,6 +7,7 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -14,9 +15,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+/* Inter-component Headers */
+#include "interrupts.h"
 #include "log.h"
 
-#include "interrupts.h"
+/* Intra-component Headers */
 
 /**
  * @brief   Defines the different states the x86 interrupt controller can be in
@@ -99,7 +102,6 @@ static void s_sig_state_handler(int signum, siginfo_t *info, void *ptr) {
 }
 
 void interrupt_init(void) {
-
   s_pid = getpid();
 
   struct sigaction act;
@@ -158,7 +160,6 @@ void interrupt_init(void) {
 }
 
 StatusCode interrupt_nvic_enable(uint8_t irq_channel, InterruptPriority priority) {
-
   if ((priority >= NUM_INTERRUPT_PRIORITIES && priority < configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY) || irq_channel >= NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;
   }
@@ -175,7 +176,6 @@ StatusCode interrupt_nvic_enable(uint8_t irq_channel, InterruptPriority priority
 }
 
 StatusCode interrupt_nvic_register_handler(uint8_t irq_channel, x86InterruptHandler handler, const InterruptSettings *settings) {
-
   if (settings == NULL || settings->type >= NUM_INTERRUPT_TYPES || settings->edge >= NUM_INTERRUPT_EDGES || irq_channel > NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;
   }
@@ -191,7 +191,6 @@ StatusCode interrupt_nvic_register_handler(uint8_t irq_channel, x86InterruptHand
 }
 
 StatusCode interrupt_nvic_trigger(uint8_t irq_channel) {
-
   if (irq_channel >= NUM_STM32L433X_INTERRUPT_CHANNELS) {
     return STATUS_CODE_INVALID_ARGS;
   }

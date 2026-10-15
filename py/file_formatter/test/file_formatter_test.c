@@ -7,9 +7,13 @@
  * @author  Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <string.h>
 
+/* Inter-component Headers */
 #include "file_formatter_test.h"
+
+/* Intra-component Headers */
 
 FileFormatterTestStruct test_struct = { .data_1 = 0U, .data_2 = 0U };
 

@@ -7,15 +7,18 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-#include "stm32l4xx_hal.h"
+/* Standard library Headers */
 
+/* Inter-component Headers */
 #include "mpu.h"
+
+/* Intra-component Headers */
+#include "stm32l4xx_hal.h"
 
 #define MPU_REGION_MIN_SIZE 32U
 #define IS_POWER_OF_TWO(x) (((x) != 0) && (((x) & ((x) - 1U)) == 0))
 
 static StatusCode s_validate_region_settings(MPURegion *region, MPURegionSettings *settings) {
-
   if (region->number >= NUM_MPU_REGIONS) {
     return STATUS_CODE_INVALID_ARGS;
   }

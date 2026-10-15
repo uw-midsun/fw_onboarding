@@ -9,10 +9,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
-#include "FreeRTOS.h"
+/* Standard library Headers */
 
-#include "status.h"
+/* Inter-component Headers */
+#include "FreeRTOS.h"
 #include "tasks.h"
+
+/* Intra-component Headers */
+#include "status.h"
 
 /**
  * @defgroup RTOS_Helpers

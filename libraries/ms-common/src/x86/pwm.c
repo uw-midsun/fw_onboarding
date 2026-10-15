@@ -7,10 +7,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
 #include <stdint.h>
 
+/* Inter-component Headers */
 #include "log.h"
 #include "pwm.h"
+
+/* Intra-component Headers */
 #include "status.h"
 
 /**

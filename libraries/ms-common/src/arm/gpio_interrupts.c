@@ -7,9 +7,14 @@
  * @author Midnight Sun Team #24 - MSXVI
  ************************************************************************************************/
 
+/* Standard library Headers */
+
+/* Inter-component Headers */
+#include "gpio_interrupts.h"
+
 #include "log.h"
 
-#include "gpio_interrupts.h"
+/* Intra-component Headers */
 
 static GpioInterrupt s_gpio_it_interrupts[GPIO_PINS_PER_PORT] = { 0U };
 
