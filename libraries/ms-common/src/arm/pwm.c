@@ -10,17 +10,16 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "pwm.h"
-
-#include "gpio.h"
-#include "log.h"
-
-/* Intra-component Headers */
-#include "status.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_tim.h"
+
+/* Intra-component Headers */
+#include "gpio.h"
+#include "log.h"
+#include "pwm.h"
+#include "status.h"
 
 #define NUM_CHANNELS 4
 

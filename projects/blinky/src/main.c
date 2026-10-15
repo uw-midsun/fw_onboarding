@@ -10,7 +10,6 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "blinky.h"
 #include "delay.h"
 #include "gpio.h"
 #include "log.h"
@@ -18,6 +17,7 @@
 #include "tasks.h"
 
 /* Intra-component Headers */
+#include "blinky.h"
 
 GpioAddress pa0_led = { .pin = 0U, .port = GPIO_PORT_A };
 

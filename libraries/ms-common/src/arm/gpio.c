@@ -10,17 +10,16 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "gpio.h"
-
 #include "FreeRTOS.h"
-#include "interrupts.h"
-#include "task.h"
-
-/* Intra-component Headers */
-#include "status.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_gpio.h"
 #include "stm32l4xx_hal_rcc.h"
+#include "task.h"
+
+/* Intra-component Headers */
+#include "gpio.h"
+#include "interrupts.h"
+#include "status.h"
 
 static const uint32_t s_gpio_mode_map[] = {
   [GPIO_ANALOG] = GPIO_MODE_ANALOG,          [GPIO_INPUT_FLOATING] = GPIO_MODE_INPUT,  [GPIO_OUTPUT_OPEN_DRAIN] = GPIO_MODE_OUTPUT_OD, [GPIO_OUTPUT_PUSH_PULL] = GPIO_MODE_OUTPUT_PP,

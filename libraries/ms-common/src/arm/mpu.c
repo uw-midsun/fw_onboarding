@@ -10,10 +10,10 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "mpu.h"
+#include "stm32l4xx_hal.h"
 
 /* Intra-component Headers */
-#include "stm32l4xx_hal.h"
+#include "mpu.h"
 
 #define MPU_REGION_MIN_SIZE 32U
 #define IS_POWER_OF_TWO(x) (((x) != 0) && (((x) & ((x) - 1U)) == 0))

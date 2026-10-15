@@ -10,14 +10,13 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "gpio.h"
-
 #include "FreeRTOS.h"
 #include "log.h"
+#include "status.h"
 #include "task.h"
 
 /* Intra-component Headers */
-#include "status.h"
+#include "gpio.h"
 
 static GpioMode s_gpio_pin_modes[GPIO_TOTAL_PINS];
 static uint8_t s_gpio_pin_state[GPIO_TOTAL_PINS];

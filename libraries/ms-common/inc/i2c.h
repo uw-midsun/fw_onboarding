@@ -14,9 +14,9 @@
 #include <stdint.h>
 
 /* Inter-component Headers */
-#include "gpio.h"
 
 /* Intra-component Headers */
+#include "gpio.h"
 #include "status.h"
 
 /**

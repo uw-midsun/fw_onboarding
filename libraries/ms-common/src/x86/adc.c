@@ -13,11 +13,11 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "adc.h"
 #include "delay.h"
+#include "semphr.h"
 
 /* Intra-component Headers */
-#include "semphr.h"
+#include "adc.h"
 
 #define VREFINT_MV 3300U
 #define ADC_MAX_VAL 4095U

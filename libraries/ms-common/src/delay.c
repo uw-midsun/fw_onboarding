@@ -10,13 +10,12 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "delay.h"
-
 #include "FreeRTOS.h"
-#include "log.h"
 #include "task.h"
 
 /* Intra-component Headers */
+#include "delay.h"
+#include "log.h"
 
 void delay_ms(uint32_t time_ms) {
   if (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {

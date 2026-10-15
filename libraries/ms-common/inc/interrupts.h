@@ -15,9 +15,9 @@
 
 /* Inter-component Headers */
 #include "FreeRTOSConfig.h"
-#include "gpio.h"
 
 /* Intra-component Headers */
+#include "gpio.h"
 #include "status.h"
 
 /**

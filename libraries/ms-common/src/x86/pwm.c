@@ -11,10 +11,10 @@
 #include <stdint.h>
 
 /* Inter-component Headers */
-#include "log.h"
-#include "pwm.h"
 
 /* Intra-component Headers */
+#include "log.h"
+#include "pwm.h"
 #include "status.h"
 
 /**

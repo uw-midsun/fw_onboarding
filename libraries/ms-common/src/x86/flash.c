@@ -14,12 +14,12 @@
 #include <string.h>
 
 /* Inter-component Headers */
-#include "flash.h"
 #include "log.h"
-
-/* Intra-component Headers */
 #include "semphr.h"
 #include "status.h"
+
+/* Intra-component Headers */
+#include "flash.h"
 
 /* Symbols from linker-scripts */
 // None are used in this case

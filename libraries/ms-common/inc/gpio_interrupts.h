@@ -12,13 +12,13 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
+
+/* Intra-component Headers */
 #include "gpio.h"
 #include "interrupts.h"
 #include "notify.h"
-#include "tasks.h"
-
-/* Intra-component Headers */
 #include "status.h"
+#include "tasks.h"
 
 /**
  * @defgroup GPIO

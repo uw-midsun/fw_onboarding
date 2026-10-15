@@ -10,21 +10,20 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "uart.h"
-
 #include "FreeRTOS.h"
-#include "gpio.h"
-#include "interrupts.h"
-#include "queues.h"
-
-/* Intra-component Headers */
 #include "semphr.h"
-#include "status.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_rcc.h"
 #include "stm32l4xx_hal_rcc_ex.h"
 #include "stm32l4xx_hal_uart.h"
+
+/* Intra-component Headers */
+#include "gpio.h"
+#include "interrupts.h"
+#include "queues.h"
+#include "status.h"
+#include "uart.h"
 
 static inline void s_enable_usart1(void) {
   __HAL_RCC_USART1_CLK_ENABLE();

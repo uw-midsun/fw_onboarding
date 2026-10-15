@@ -14,9 +14,9 @@
 #include <stddef.h>
 
 /* Inter-component Headers */
-#include "flash.h"
 
 /* Intra-component Headers */
+#include "flash.h"
 #include "status.h"
 
 /**

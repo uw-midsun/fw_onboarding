@@ -11,9 +11,9 @@
 #include <stdio.h>
 
 /* Inter-component Headers */
-#include "ms_semaphore.h"
 
 /* Intra-component Headers */
+#include "ms_semaphore.h"
 
 StatusCode ms_mutex_init(Mutex *mutex) {
   mutex->handle = xSemaphoreCreateMutexStatic(&mutex->buffer);

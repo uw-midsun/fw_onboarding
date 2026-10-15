@@ -10,11 +10,10 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "gpio_interrupts.h"
-
 #include "log.h"
 
 /* Intra-component Headers */
+#include "gpio_interrupts.h"
 
 static GpioInterrupt s_gpio_it_interrupts[GPIO_PINS_PER_PORT] = { 0U };
 

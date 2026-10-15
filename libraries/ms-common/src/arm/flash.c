@@ -12,13 +12,13 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "flash.h"
-#include "misc.h"
-
-/* Intra-component Headers */
 #include "semphr.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_flash.h"
+
+/* Intra-component Headers */
+#include "flash.h"
+#include "misc.h"
 
 /* Symbols from linker-scripts */
 extern uint32_t _flash_start;

@@ -16,10 +16,10 @@
 #include <unistd.h>
 
 /* Inter-component Headers */
-#include "interrupts.h"
 #include "log.h"
 
 /* Intra-component Headers */
+#include "interrupts.h"
 
 /**
  * @brief   Defines the different states the x86 interrupt controller can be in

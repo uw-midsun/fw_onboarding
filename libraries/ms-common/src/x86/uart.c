@@ -11,10 +11,10 @@
 #include <stddef.h>
 
 /* Inter-component Headers */
-#include "uart.h"
 
 /* Intra-component Headers */
 #include "status.h"
+#include "uart.h"
 
 StatusCode uart_init(UartPort uart, UartSettings *settings) {
   return STATUS_CODE_UNIMPLEMENTED;

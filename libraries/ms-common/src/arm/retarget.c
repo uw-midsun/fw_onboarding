@@ -13,13 +13,13 @@
 #include <stdio.h>
 
 /* Inter-component Headers */
-#include "retarget.h"
-
-/* Intra-component Headers */
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_gpio.h"
 #include "stm32l4xx_hal_uart.h"
 #include "stm32l4xx_it.h"
+
+/* Intra-component Headers */
+#include "retarget.h"
 
 static UART_HandleTypeDef hard_fault_uart;
 

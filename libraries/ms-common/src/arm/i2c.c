@@ -10,18 +10,17 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "i2c.h"
-
 #include "FreeRTOS.h"
-#include "interrupts.h"
-
-/* Intra-component Headers */
 #include "semphr.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_i2c.h"
 #include "stm32l4xx_hal_i2c_ex.h"
 #include "stm32l4xx_hal_rcc.h"
+
+/* Intra-component Headers */
+#include "i2c.h"
+#include "interrupts.h"
 
 static inline void s_enable_i2c1(void) {
   __HAL_RCC_I2C1_CLK_ENABLE();

@@ -15,10 +15,10 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 
 /* Intra-component Headers */
-#include "semphr.h"
 #include "status.h"
 
 /**

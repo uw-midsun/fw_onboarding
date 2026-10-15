@@ -10,6 +10,6 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "fsm.h"
 
 /* Intra-component Headers */
+#include "fsm.h"

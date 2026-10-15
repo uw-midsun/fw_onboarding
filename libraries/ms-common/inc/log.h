@@ -15,12 +15,12 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "ms_semaphore.h"
 #include "task.h"
-#include "tasks.h"
-#include "uart.h"
 
 /* Intra-component Headers */
+#include "ms_semaphore.h"
+#include "tasks.h"
+#include "uart.h"
 
 /**
  * @defgroup  Logger

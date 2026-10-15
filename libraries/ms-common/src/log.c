@@ -10,9 +10,10 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "log.h"
 
 /* Intra-component Headers */
+
+#include "log.h"
 
 // Allocating memory for extern variables in .h files
 char g_log_buffer[MAX_LOG_SIZE];

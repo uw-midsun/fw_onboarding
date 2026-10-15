@@ -13,10 +13,10 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "tasks.h"
 
 /* Intra-component Headers */
 #include "status.h"
+#include "tasks.h"
 
 /**
  * @defgroup RTOS_Helpers

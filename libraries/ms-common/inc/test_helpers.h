@@ -12,10 +12,10 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
-#include "unity.h"
 
 /* Intra-component Headers */
 #include "status.h"
+#include "unity.h"
 
 /**
  * @defgroup Miscellaneous

@@ -11,12 +11,12 @@
 #include <string.h>
 
 /* Inter-component Headers */
-#include "interrupts.h"
-
-/* Intra-component Headers */
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_cortex.h"
 #include "stm32l4xx_hal_exti.h"
+
+/* Intra-component Headers */
+#include "interrupts.h"
 
 static EXTI_HandleTypeDef s_exti_handles[GPIO_PINS_PER_PORT];
 

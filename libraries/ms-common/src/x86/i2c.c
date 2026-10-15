@@ -11,13 +11,13 @@
 #include <stdbool.h>
 
 /* Inter-component Headers */
-#include "i2c.h"
 #include "log.h"
 #include "queues.h"
-
-/* Intra-component Headers */
 #include "semaphore.h"
 #include "stdio.h"
+
+/* Intra-component Headers */
+#include "i2c.h"
 
 typedef enum I2CMode {
   I2C_MODE_TRANSMIT = 0,

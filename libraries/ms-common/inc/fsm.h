@@ -10,15 +10,15 @@
  ************************************************************************************************/
 
 /* Standard library Headers */
+#include "stdint.h"
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "tasks.h"
+#include "semphr.h"
 
 /* Intra-component Headers */
-#include "semphr.h"
 #include "status.h"
-#include "stdint.h"
+#include "tasks.h"
 
 /**
  * @defgroup Finite_State_Machine

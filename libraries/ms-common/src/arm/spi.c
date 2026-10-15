@@ -11,15 +11,15 @@
 
 /* Inter-component Headers */
 #include "FreeRTOS.h"
-#include "interrupts.h"
-
-/* Intra-component Headers */
 #include "semphr.h"
-#include "spi.h"
 #include "stm32l433xx.h"
 #include "stm32l4xx_hal_conf.h"
 #include "stm32l4xx_hal_rcc.h"
 #include "stm32l4xx_hal_spi.h"
+
+/* Intra-component Headers */
+#include "interrupts.h"
+#include "spi.h"
 
 static inline void s_enable_spi1(void) {
   __HAL_RCC_SPI1_CLK_ENABLE();
