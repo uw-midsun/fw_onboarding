@@ -8,6 +8,7 @@
  ************************************************************************************************/
 
 /* Standard library Headers */
+#include <stddef.h>
 
 /* Inter-component Headers */
 #include "ads1115.h"
@@ -19,26 +20,61 @@
 #include "status.h"
 
 StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAddress *ready_pin) {
-  if (config == NULL || ready_pin == NULL) {
+  if (config == NULL ||
+      (unsigned int)i2c_addr < ADS1115_ADDR_GND ||
+      (unsigned int)i2c_addr > ADS1115_ADDR_SCL) {
     return STATUS_CODE_INVALID_ARGS;
   }
 
   config->i2c_addr = i2c_addr;
+  config->ready_pin = ready_pin;
   uint16_t cmd;
 
   /* --------------------- FW103 START --------------------- */
   /* Configure for continuous mode (MODE bit = 0) */
-  cmd = 0x0000;
+  cmd = 0x0483;
 
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
+  StatusCode status = i2c_write_reg(
+      config->i2c_port,
+      i2c_addr,
+      ADS1115_REG_CONFIG,
+      (uint8_t *)&cmd,
+      sizeof(cmd)
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
 
   /* Configure lower threshold to be 0V */
   cmd = 0x0000;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_LO_THRESH, (uint8_t *)(&cmd), 2);
+
+  status = i2c_write_reg(
+      config->i2c_port,
+      i2c_addr,
+      ADS1115_REG_LO_THRESH,
+      (uint8_t *)&cmd,
+      sizeof(cmd)
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
 
   /* Configure higher threshold to be 1.5V */
-  cmd = 0x0000;
-  i2c_write_reg(config->i2c_port, i2c_addr, ADS1115_REG_HI_THRESH, (uint8_t *)(&cmd), 2);
+  cmd = 0x5DC0;
+
+  status = i2c_write_reg(
+      config->i2c_port,
+      i2c_addr,
+      ADS1115_REG_HI_THRESH,
+      (uint8_t *)&cmd,
+      sizeof(cmd)
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
   /* ---------------------- FW103 END ---------------------- */
 
   // Register the ALRT pin
@@ -48,30 +84,67 @@ StatusCode ads1115_init(ADS1115_Config *config, ADS1115_Address i2c_addr, GpioAd
 }
 
 StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channel) {
-  if (config == NULL) {
+  if (config == NULL ||
+      (unsigned int)channel > ADS1115_CHANNEL_3) {
     return STATUS_CODE_INVALID_ARGS;
   }
 
   uint16_t cmd;
 
   /* Read the current configuration register value */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
+  StatusCode status = i2c_read_reg(
+      config->i2c_port,
+      config->i2c_addr,
+      ADS1115_REG_CONFIG,
+      (uint8_t *)&cmd,
+      sizeof(cmd)
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
 
   /* Mask out the current channel bits (MUX bits are 12-14) */
-  cmd &= ~0x7000;
+  cmd &= (uint16_t)~0x7000U;
 
   /* --------------------- FW103 START --------------------- */
   /* Configure command to select the requested channel (Channel N should be default GND) */
-  cmd |= 0x0000U;
+  cmd |= 0x4000U | ((uint16_t)channel << 12);
   /* ---------------------- FW103 END ---------------------- */
 
-  i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
-  return STATUS_CODE_OK;
+  return i2c_write_reg(
+      config->i2c_port,
+      config->i2c_addr,
+      ADS1115_REG_CONFIG,
+      (uint8_t *)&cmd,
+      sizeof(cmd)
+  );
 }
 
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
+  if (config == NULL || reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+
+  StatusCode status = ads1115_select_channel(config, channel);
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+
+  status = i2c_read_reg(
+      config->i2c_port,
+      config->i2c_addr,
+      ADS1115_REG_CONVERSION,
+      (uint8_t *)reading,
+      sizeof(*reading)
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
@@ -79,6 +152,23 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
+  if (config == NULL || reading == NULL) {
+    return STATUS_CODE_INVALID_ARGS;
+  }
+
+  int16_t raw_reading;
+
+  StatusCode status = ads1115_read_raw(
+      config,
+      channel,
+      &raw_reading
+  );
+
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+
+  *reading = ((float)raw_reading / 32768.0f) * 2.048f;
   /* ---------------------- FW103 END ---------------------- */
   return STATUS_CODE_OK;
 }
