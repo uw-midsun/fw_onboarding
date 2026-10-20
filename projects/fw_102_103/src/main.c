@@ -23,6 +23,7 @@
 /* TODO: FW103 Add reader task period. Feel free to play around with these values! */
 #define BLINKY_PERIOD_MS 1000U
 #define ADS1115_SAMPLING_PERIOD_MS 1000U
+#define ADS1115_QUEUE_CAPACITY 5U
 
 static GpioAddress blinky_gpio = {
   /* --------------------- FW102 START --------------------- */
@@ -50,28 +51,76 @@ static ADS1115_Config ads1115_cfg = {
 };
 
 
-
+static uint8_t ads1115_que_storage[ADS1115_QUEUE_CAPACITY * sizeof(float)];
 static Queue ads1115_data_queue = {
   /* --------------------- FW103 START --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  .num_items = ADS1115_QUEUE_CAPACITY,
+  .item_size = sizeof(float),
+  .storage_buf = ads1115_que_storage,
   /* --------------------- FW103 START --------------------- */
 };
 
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
-  /* --------------------- FW103 END --------------------- */
+  while (true) {
+    gpio_toggle_state(&blinky_gpio);
+    LOG_DEBUG("blinky state: %s\n",
+      gpio_get_state(&blinky_gpio) ? "on" : "off");
+    delay_ms(BLINKY_PERIOD_MS);
+  }
+  /* --------------------- FW103 END -#-------------------- */
 }
 
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
-  /* --------------------- FW103 END --------------------- */
+  float voltage = 0.0f;
+  while (true) {
+    StatusCode status = ads1115_read_converted(
+        &ads1115_cfg, ADS1115_CHANNEL_0, &voltage);
+
+    if (status == STATUS_CODE_OK) {
+      status = queue_send(&ads1115_data_queue, &voltage, 1000U);
+
+      if (status != STATUS_CODE_OK) 
+      {
+        LOG_DEBUG("write to queue failed\n");
+      } 
+      
+      else 
+      {
+        LOG_DEBUG("writing to adc queu: %f\n", voltage);
+      }
+    } 
+    else 
+    {
+      LOG_DEBUG("adc read failed\n");
+    }
+
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
 }
+  /* --------------------- FW103 END --------------------- */
+
 
 TASK(ads1115_reader, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the queue containing ADS1115 data and process it */
+  float voltage = 0.0f;
+
+  while (true) {
+    StatusCode status = queue_receive(&ads1115_data_queue, &voltage, 1000U);
+
+    if (status == STATUS_CODE_OK) {
+      LOG_DEBUG("reading from adc queue: %f\n", voltage);
+    } 
+    else 
+    {
+      LOG_DEBUG("read from queue failed\n");
+    }
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -116,6 +165,10 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  status_ok_or_return(queue_init(&ads1115_data_queue));
+  tasks_init_task(blinky, TASK_PRIORITY(1U), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(1U), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(1U), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
