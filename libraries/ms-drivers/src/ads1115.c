@@ -57,11 +57,12 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
   i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)&cmd, sizeof(cmd));
 
   /* Mask out the current channel bits (MUX bits are 12-14) */
-  cmd &= ~0x7000;
+  cmd &= ~0x7000; // 0111 / 0000 / 0000 / 0000, 10010000011
 
   /* --------------------- FW102 START --------------------- */
   /* Configure command to select the requested channel (Channel N should be default GND) */
-  cmd |= 0x0000U;
+  cmd |= 0x4000U;
+  cmd |= (uint8_t)channel << 12;
   /* ---------------------- FW102 END ---------------------- */
 
   i2c_write_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONFIG, (uint8_t *)(&cmd), 2);
@@ -71,7 +72,11 @@ StatusCode ads1115_select_channel(ADS1115_Config *config, ADS1115_Channel channe
 StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int16_t *reading) {
   /* --------------------- FW102 START --------------------- */
   /* TODO: complete ADS1115 read raw function */
-  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint16_t *)(reading), 2);
+  StatusCode status = ads1115_select_channel(config, channel);
+  if (status != STATUS_CODE_OK) {
+    return status;
+  }
+  i2c_read_reg(config->i2c_port, config->i2c_addr, ADS1115_REG_CONVERSION, (uint8_t *)(reading), 2);
 
   /* ---------------------- FW102 END ---------------------- */
   return STATUS_CODE_OK;
