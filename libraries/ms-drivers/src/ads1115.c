@@ -83,12 +83,16 @@ StatusCode ads1115_read_raw(ADS1115_Config *config, ADS1115_Channel channel, int
 StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channel, float *reading) {
   /* --------------------- FW103 START --------------------- */
   /* TODO: complete ADS1115 read converted function */
-  if(config == NULL) {
+  if(config == NULL || reading == NULL) {
     return STATUS_CODE_INVALID_ARGS;
   }
 
   int16_t raw_reading; //pointer to the raw reading
   StatusCode status = ads1115_read_raw(config, channel, &raw_reading); //store the read value in raw_reading
+
+  if(status != STATUS_CODE_OK) {
+    return status;
+  }
 
   *reading = ((float)raw_reading / 32768.0f) * 2.048f; //convert 32768 -> 2.048
   /* ---------------------- FW103 END ---------------------- */
