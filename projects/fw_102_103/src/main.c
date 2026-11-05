@@ -10,6 +10,7 @@
 /* Standard library Headers */
 
 /* Inter-component Headers */
+#include "tasks.h"
 #include "ads1115.h"
 #include "delay.h"
 #include "gpio.h"
@@ -55,6 +56,25 @@ static Queue ads1115_data_queue = {
 TASK(blinky, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will blinky an LED and log the state of the pin */
+  //print task name
+  while(true) {
+    //get state and print
+    GpioState state;
+    state = gpio_get_state(&blinky_gpio);
+    if(state == 1){
+      LOG_DEBUG("%s: ON", blinky->name);
+    }
+    else{
+      LOG_DEBUG("%s: OFF", blinky->name);
+    }
+    LOG_DEBUG("\n");
+  
+    //toggle the state
+    gpio_toggle_state(&blinky_gpio);
+  
+    //delay for predetermined delay
+    delay_ms(BLINKY_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -108,6 +128,7 @@ int main() {
 
   /* --------------------- FW103 START --------------------- */
   /* Initialize the RTOS tasks and data queue */
+  tasks_init_task(blinky, 4, NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
