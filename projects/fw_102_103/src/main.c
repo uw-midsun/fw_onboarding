@@ -81,6 +81,14 @@ TASK(blinky, TASK_STACK_256) {
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  float voltage;
+  StatusCode status = ads1115_read_converted(&ads1115_cfg, ADS1115_CHANNEL_0, &voltage);
+  queue_send(&ads1115_data_queue, &voltage, ADS1115_SAMPLING_PERIOD_MS);
+  if(status != STATUS_CODE_OK) {
+    LOG_DEBUG("Write to queue failed");
+  }
+  //delay
+  delay_ms(ADS1115_SAMPLING_PERIOD_MS)
   /* --------------------- FW103 END --------------------- */
 }
 
