@@ -77,10 +77,11 @@ TASK(blinky, TASK_STACK_256) {
   // adding while loop to toggle the state of the blinky GPIO pin, log the state of the pin, and delay for the defined blinky period.
   while (true) {
     // toggling the state of the blinky GPIO pin
-    gpio_toggle_pin(&blinky_gpio);
+    gpio_toggle_state(&blinky_gpio);
+    GpioState state = gpio_get_state(&blinky_gpio);
 
     // logging the state of the blinky GPIO pin
-    LOG_DEBUG("Blinky - state: %d\n", gpio_get_state(&blinky_gpio));
+    LOG_DEBUG("Blink - State: %s\n", (state == GPIO_STATE_HIGH) ? "ON" : "OFF");
 
     // delaying for the defined blinky period
     delay_ms(BLINKY_PERIOD_MS);
@@ -91,6 +92,22 @@ TASK(blinky, TASK_STACK_256) {
 TASK(ads1115_writer, TASK_STACK_256) {
   /* --------------------- FW103 START --------------------- */
   /* This task will read from the ADS1115 external chip and push its data to a queue */
+  //I am adding a float variable to store the voltage reading from the ADS1115
+  float voltage = 0.0f;
+  while (true) {
+    // THis code is added to read the converted voltage from the ADS1115 and store it in the voltage variable
+    ads1115_read_converted(&ads115_cfg, ADS1115_CHANNEL_0, &voltage);
+
+    // adding the voltage reading to the ADS1115 data queue (with no delay)
+    StatusCode status = queue_send(&ads1115_data_queue, &voltage, 0);
+
+    //adding a check to see if the queue send was successful and loging the result
+    if (status != STATUS_CODE_OK)
+      LOG_DEBUG("write to queue failed\n");
+    else 
+      LOG_DEBUG("Sent data to queue: %f\n", voltage);
+    delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+  }
   /* --------------------- FW103 END --------------------- */
 }
 
@@ -99,22 +116,18 @@ TASK(ads1115_reader, TASK_STACK_256) {
   /* This task will read from the queue containing ADS1115 data and process it */
   
   // adding a float variable to store the voltage reading from the ADS1115
-  float voltage;
+  float voltage = 0.0f;
   
   //adding while loop to read the converted voltage from the ADS1115, send it to the queue, and log the result of the queue send.
   while (true) {
-    // reading the converted voltage from the ADS1115 and storing it in the voltage variable
-    ads1115_read_converted(&ads115_cfg, ADS1115_CHANNEL_0, &voltage);
-    
-    // adding the voltage reading to the ADS1115 data queue with no delay
-    StatusCode status = queue_send(&ads1115_data_queue, &voltage, 0);
+
+    StatusCode status = queue_receive(&ads1115_data_queue, &voltage, 2000);
 
     //adding a check to see if the queue send was successful and loging the result
-    if (status != STATUS_CODE_OK)
-      LOG_DEBUG("Failed to send data to queue\n");
+    if (status == STATUS_CODE_OK)
+      LOG_DEBUG("Reading from ADC queue: %f\n", voltage);
     else 
-      LOG_DEBUG("Sent data to queue: %f\n", voltage);
-      delay_ms(ADS1115_SAMPLING_PERIOD_MS);
+      LOG_DEBUG("read from queue failed\n");
   }
   /* --------------------- FW103 END --------------------- */
 }
@@ -148,14 +161,13 @@ int main() {
   /* Initialize printing module */
   /* Initialize the MCU */
   mcu_init();
-  gpio_init();
+  log_init();
 
   gpio_init_pin(&blinky_gpio, GPIO_OUTPUT_PUSH_PULL, GPIO_STATE_LOW);
   
   i2c_init(ADS1115_I2C_PORT, &i2c_settings);
   ads1115_init(&ads115_cfg, ADS1115_ADDR_GND, &ready_pin);
 
-  log_init();
 
   /* Initialize RTOS tasks */
   tasks_init();
@@ -165,9 +177,9 @@ int main() {
 
   //adding code to initialize the ADS1115 data queue and the RTOS tasks for blinky, ads1115_writer, and ads1115_reader.
   queue_init(&ads1115_data_queue);
-  task_init_task(blinky, TASK_PRIORITY(1), NULL);
-  task_init_task(ads1115_writer, TASK_PRIORITY(2), NULL);
-  task_init_task(ads1115_reader, TASK_PRIORITY(3), NULL);
+  tasks_init_task(blinky, TASK_PRIORITY(1), NULL);
+  tasks_init_task(ads1115_writer, TASK_PRIORITY(2), NULL);
+  tasks_init_task(ads1115_reader, TASK_PRIORITY(3), NULL);
   /* --------------------- FW103 END --------------------- */
 
 #if defined(MS_PLATFORM_X86)
