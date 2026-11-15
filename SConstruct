@@ -1,5 +1,4 @@
 from scons.common import flash_run
-import scons_compiledb
 import subprocess
 
 
@@ -110,10 +109,6 @@ if COMMAND == "mpxe":
 # Retrieve the construction environment from the appropriate platform script
 env = SConscript(f'platform/{PLATFORM}.py', exports=['FLASH_TYPE', 'BUILD_CONFIG'])
 
-database_name = f"compile_commands_{PLATFORM}.json"
-config = scons_compiledb.Config(db=database_name)
-scons_compiledb.enable_with_cmdline(env, config)
-
 VARS = {
     "PLATFORM": PLATFORM,
     "TARGET": TARGET,
@@ -122,6 +117,12 @@ VARS = {
     "BUILD_CONFIG": BUILD_CONFIG,
     "env": env,
 }
+
+env.Tool("compilation_db")
+print("Creating CompilationDatabase...")
+compdb = env.CompilationDatabase()
+print(f"CompilationDatabase target: {compdb}")
+Default(compdb)
 
 # Parse asan / tsan and Adding Sanitizer Argument to Environment Flags
 # Note platform needs to be explicitly set to x86

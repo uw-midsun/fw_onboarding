@@ -42,8 +42,9 @@ static GpioAddress blinky_gpio = {
 };
 
 static Queue ads1115_data_queue = {
-  /* --------------------- TODO: FW103 --------------------- */
+  /* --------------------- FW103 START --------------------- */
   /* Hint: You will need to define an array to be used as the storage */
+  /* --------------------- FW103 START --------------------- */
 };
 
 TASK(blinky, TASK_STACK_256) {
