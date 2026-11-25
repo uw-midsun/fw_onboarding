@@ -81,7 +81,7 @@ StatusCode ads1115_read_converted(ADS1115_Config *config, ADS1115_Channel channe
   /* --------------------- FW102 START --------------------- */
   int16_t raw_reading;
   ads1115_read_raw(config, channel, &raw_reading);
-  *reading = (raw_reading *32768.0f) * 2.048f;
+  *reading = (raw_reading /32768.0f) * 2.048f;
   /* ---------------------- FW102 END ---------------------- */
   return STATUS_CODE_OK;
 }
